@@ -1,27 +1,33 @@
-"""Map Machine: Python map renderer for OpenStreetMap with custom icon set."""
+#!/usr/bin/env python3
+#
+#  __init__.py
+"""
+Map Machine is a Python OpenStreetMap renderer and tile generator.
+"""
+#
+#  Copyright © 2021 Sergey Vartanov <me@enzet.ru>
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in all
+#  copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+#  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+#  DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+#  OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+#  OR OTHER DEALINGS IN THE SOFTWARE.
+#
 
-__project__ = "Map Machine"
-__description__ = (
-    "Simple Python map renderer for OpenStreetMap with custom icon set "
-    "intended to display as many tags as possible"
-)
-__url__ = "https://github.com/enzet/map-machine"
-__doc_url__ = f"{__url__}/blob/main/README.md"
-__author__ = "Sergey Vartanov"
-__email__ = "me@enzet.ru"
-__version__ = "0.1.9"
-
-REQUIREMENTS: list[str] = [
-    "CairoSVG>=2.5.0",
-    "colour>=0.1.5",
-    "numpy>=1.18.1",
-    "Pillow>=8.2.0",
-    "portolan>=1.0.1",
-    "pycairo>=1.20.1",
-    "pytest>=6.2.2",
-    "PyYAML>=4.2b1",
-    "setuptools>=51.0.0",
-    "Shapely>=1.7.1",
-    "svgwrite>=1.4",
-    "urllib3>=1.25.6",
-]
+__author__: str = "Sergey Vartanov"
+__copyright__: str = "2021 Sergey Vartanov"
+__license__: str = "MIT License"
+__version__: str = "0.1.9"
+__email__: str = "me@enzet.ru"

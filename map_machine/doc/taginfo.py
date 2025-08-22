@@ -13,8 +13,6 @@ from map_machine import (
     __description__,
     __doc_url__,
     __email__,
-    __project__,
-    __url__,
 )
 from map_machine.scheme import Scheme
 from map_machine.workspace import workspace
@@ -28,12 +26,12 @@ class TaginfoProjectFile:
 
         self.structure = {
             "data_format": 1,
-            "data_url": __url__ + "/" + str(path),
+            "data_url": "https://github.com/potbanksoftware/map-machine/" + str(path),
             "data_updated": datetime.now().strftime("%Y%m%dT%H%M%SZ"),
             "project": {
-                "name": __project__,
+                "name": "Map Machine",
                 "description": __description__,
-                "project_url": __url__,
+                "project_url": "https://github.com/potbanksoftware/map-machine",
                 "doc_url": __doc_url__,
                 "icon_url": "http://enzet.ru/map-machine/image/logo.png",
                 "contact_name": __author__,

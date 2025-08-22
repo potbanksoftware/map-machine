@@ -12,7 +12,6 @@ from svgwrite.container import Group
 from svgwrite.path import Path as SVGPath
 from svgwrite.shapes import Rect
 
-from map_machine import __project__
 from map_machine.constructor import Constructor
 from map_machine.drawing import draw_text
 from map_machine.feature.building import Building, draw_walls, BUILDING_SCALE
@@ -244,7 +243,7 @@ class Map:
         outline_color: Color = Color("#FFFFFF")
 
         credit_list: list[tuple[str, tuple[float, float]]] = [
-            (f"Rendering: {__project__}", (right_margin, bottom_margin))
+            (f"Rendering: Map Machine", (right_margin, bottom_margin))
         ]
         if self.configuration.credit:
             data_credit: tuple[str, tuple[float, float]] = (

@@ -1,0 +1,28 @@
+# Configuration for 'repo_helper' (https://github.com/repo-helper/repo_helper)
+---
+modname: 'map-machine'
+copyright_years: '2021'
+author: 'Sergey Vartanov'
+email: 'me@enzet.ru'
+username: 'potbanksoftware'
+assignee: 'domdfcoding'
+version: '0.1.9'
+license: 'MIT'
+short_desc: 'Map Machine is a Python OpenStreetMap renderer and tile generator.'
+
+enable_conda: false
+on_pypi: false
+use_whey: true
+enable_docs: false
+
+python_versions:
+  3.9:
+  3.10:
+  3.11:
+  3.12:
+  3.13:
+
+additional_ignore:
+ - out/
+ - cache/
+ - taginfo
