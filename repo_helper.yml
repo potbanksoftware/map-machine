@@ -26,3 +26,10 @@ additional_ignore:
  - out/
  - cache/
  - taginfo
+
+manifest_additional:
+ - "recursive-include map_machine/icons *"
+ - "include map_machine/scheme/default.yml"
+
+console_scripts:
+ - "map-machine = map_machine.main:main"
