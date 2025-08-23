@@ -82,8 +82,7 @@ def completion_commands() -> str:
 	result: str = ''
 	result += f"set -l commands {commands}\n"
 	result += "complete -c map-machine -f\n"
-	result += (f'complete -c map-machine -n "not __fish_seen_subcommand_from '
-				f'$commands" -a "{commands}"\n')
+	result += (f'complete -c map-machine -n "not __fish_seen_subcommand_from $commands" -a "{commands}"\n')
 	for command in COMMANDS:
 		if command in ["icons", "taginfo"]:
 			continue

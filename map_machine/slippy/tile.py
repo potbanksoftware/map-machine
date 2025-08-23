@@ -135,8 +135,7 @@ class Tile:
 
 	def get_carto_address(self) -> str:
 		"""Get URL of this tile from the OpenStreetMap server."""
-		return (f"https://tile.openstreetmap.org/"
-				f"{self.zoom_level}/{self.x}/{self.y}.png")
+		return f"https://tile.openstreetmap.org/{self.zoom_level}/{self.x}/{self.y}.png"
 
 	def draw(
 			self,
@@ -445,8 +444,7 @@ def generate_tiles(options: argparse.Namespace) -> None:
 		osm_data.parse_osm_file(Path(options.input_file_name))
 
 		if osm_data.view_box is None:
-			raise ValueError("Failed to parse boundary box input file "
-								f"{options.input_file_name}.")
+			raise ValueError(f"Failed to parse boundary box input file {options.input_file_name}.")
 
 		boundary_box: BoundaryBox = osm_data.view_box
 

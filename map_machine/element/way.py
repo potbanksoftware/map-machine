@@ -88,10 +88,10 @@ PLACEMENT_FEATURES_2: list[dict[str, str]] = [
 
 def draw_overlapped_ways(types: list[dict[str, str]], path: Path) -> None:
 	"""
-    Draw two sets of ways intersecting each other.
+	Draw two sets of ways intersecting each other.
 
-    The goal is to show check priority.
-    """
+	The goal is to show check priority.
+	"""
 	grid: Grid = Grid()
 
 	for index, tags in enumerate(types):

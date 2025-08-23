@@ -69,18 +69,18 @@ class Workspace:
 
 	def find_scheme_path(self, identifier: str) -> Path:
 		"""
-        Find map scheme file by its identifier.
+		Find map scheme file by its identifier.
 
-        :param identifier: scheme identifier or file path.
-        :returns:
-          - default scheme file `default.yml` if identifier is not specified,
-          - `<identifier>.yml` from the default scheme directory (`scheme`) if
-            exists,
-          - path if identifier is a relative or absolute path to a scheme file.
-          - `None` otherwise.
+		:param identifier: scheme identifier or file path.
+		:returns:
+		  - default scheme file `default.yml` if identifier is not specified,
+		  - `<identifier>.yml` from the default scheme directory (`scheme`) if
+		    exists,
+		  - path if identifier is a relative or absolute path to a scheme file.
+		  - `None` otherwise.
 
-        See `Scheme`.
-        """
+		See `Scheme`.
+		"""
 		if not identifier:
 			return self.DEFAULT_SCHEME_PATH
 

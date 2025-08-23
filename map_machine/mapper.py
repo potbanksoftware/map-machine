@@ -234,11 +234,11 @@ class Map:
 
 	def draw_credits(self, size: np.ndarray) -> None:
 		"""
-        Add OpenStreetMap credit and the link to the project itself.
-        OpenStreetMap requires to use the credit “© OpenStreetMap contributors”.
+		Add OpenStreetMap credit and the link to the project itself.
+		OpenStreetMap requires to use the credit “© OpenStreetMap contributors”.
 
-        See https://www.openstreetmap.org/copyright
-        """
+		See https://www.openstreetmap.org/copyright
+		"""
 		right_margin: float = 15.0
 		bottom_margin: float = 15.0
 		font_size: float = 10.0
@@ -247,8 +247,7 @@ class Map:
 		text_color: Color = Color("#888888")
 		outline_color: Color = Color("#FFFFFF")
 
-		credit_list: list[tuple[str, tuple[float,
-											float]]] = [(f"Rendering: Map Machine", (right_margin, bottom_margin))]
+		credit_list: list[tuple[str, tuple[float, float]]] = [(f"Rendering: Map Machine", (right_margin, bottom_margin))]
 		if self.configuration.credit:
 			data_credit: tuple[str, tuple[float, float]] = (
 					f"Data: {self.configuration.credit}",
@@ -276,10 +275,10 @@ class Map:
 
 def render_map(arguments: argparse.Namespace) -> None:
 	"""
-    Map rendering entry point.
+	Map rendering entry point.
 
-    :param arguments: command-line arguments
-    """
+	:param arguments: command-line arguments
+	"""
 	scheme_path: Optional[Path] = workspace.find_scheme_path(arguments.scheme)
 	if scheme_path is None:
 		raise ValueError(f"Scheme `{arguments.scheme}` not found.")
