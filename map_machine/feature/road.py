@@ -2,7 +2,7 @@
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, MutableSequence, Optional, Sequence, Union
+from typing import Any, MutableSequence, Optional, Union
 
 import numpy as np
 import svgwrite   # type: ignore[import-untyped]

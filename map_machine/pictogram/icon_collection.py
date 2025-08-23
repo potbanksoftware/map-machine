@@ -11,11 +11,10 @@ from svgwrite import Drawing  # type: ignore[import-untyped]
 
 from map_machine.pictogram.icon import (
     Icon,
-    Shape,
     ShapeExtractor,
     ShapeSpecification,
 )
-from map_machine.scheme import NodeMatcher, Scheme
+from map_machine.scheme import Scheme
 from map_machine.workspace import workspace
 
 __author__ = "Sergey Vartanov"
@@ -132,8 +131,9 @@ class IconCollection:
         outline_opacity: float = 1.0,
     ) -> None:
         """
-        :param output_directory: path to the directory to store individual SVG
-            files for icons
+        Draw the icons.
+
+        :param output_directory: path to the directory to store individual SVG files for icons
         :param license_path: path to the file with license
         :param by_name: use names instead of identifiers
         :param color: fill color
@@ -210,9 +210,9 @@ class IconCollection:
 
 def draw_icons() -> None:
     """
-    Draw all possible icon shapes combinations as grid in one SVG file and as
-    individual SVG files.
+    Draw all possible icon shapes combinations as grid in one SVG file and as individual SVG files.
     """
+
     scheme: Scheme = Scheme.from_file(workspace.DEFAULT_SCHEME_PATH)
     extractor: ShapeExtractor = ShapeExtractor(
         workspace.ICONS_PATH, workspace.ICONS_CONFIG_PATH

@@ -81,7 +81,7 @@ class TextConstructor:
             "text_outline_color"
         )
 
-    def label(self, text: str, size: float = DEFAULT_FONT_SIZE):
+    def label(self, text: str, size: float = DEFAULT_FONT_SIZE) -> Label:
         return Label(
             text, self.default_color, self.default_out_color, size=size
         )

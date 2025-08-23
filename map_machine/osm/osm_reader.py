@@ -180,7 +180,7 @@ class OSMNode(Tagged):
     def __hash__(self) -> int:
         return self.id_
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, OSMNode):
             return False
         return (

@@ -361,9 +361,11 @@ class Scheme:
     @classmethod
     def from_file(cls, file_name: Path) -> "Scheme":
         """
-        :param file_name: name of the scheme file with tags, colors, and tag key
-            specification
+        Construct a :class:`~.Scheme` from a file.
+
+        :param file_name: name of the scheme file with tags, colors, and tag key specification
         """
+
         with file_name.open(encoding="utf-8") as input_file:
             content: dict[str, Any] = yaml.load(
                 input_file.read(), Loader=yaml.FullLoader
@@ -411,7 +413,7 @@ class Scheme:
         """Get default color for an extra icon."""
         return self.get_color("extra")
 
-    def get(self, variable_name: str):
+    def get(self, variable_name: str) -> str:
         """
         Get value of variable.
 
@@ -419,12 +421,11 @@ class Scheme:
         """
         if variable_name in self.colors:
             return self.colors[variable_name]
-        return 0.0
+        return '0.0'
 
     def is_no_drawable(self, key: str, value: str) -> bool:
         """
-        Return true if key is specified as no drawable (should not be
-        represented on the map as icon set or as text) by the scheme.
+        Return whether the key is specified as no drawable (should not be represented on the map as icon set or as text) by the scheme.
 
         :param key: OpenStreetMap tag key
         :param value: OpenStreetMap tag value
@@ -445,8 +446,7 @@ class Scheme:
 
     def is_writable(self, key: str, value: str) -> bool:
         """
-        Return true if key is specified as writable (should be represented on
-        the map as text) by the scheme.
+        Return whether the key is specified as writable (should be represented on the map as text) by the scheme.
 
         :param key: OpenStreetMap tag key
         :param value: OpenStreetMap tag value
@@ -492,13 +492,12 @@ class Scheme:
         :param country: country to match location restrictions
         :param zoom_level: current map zoom level
         :param ignore_level_matching: do not check level for the icon
-        :param show_overlapped: get small dot instead of icon if point is
-            overlapped by some other points
-        :return (icon set, icon priority)
+        :param show_overlapped: get small dot instead of icon if point is overlapped by some other points
+
+        :return: (icon set, icon priority)
         """
-        tags_hash: str = (
-            ",".join(tags.keys()) + ":" + ",".join(map(str, tags.values()))
-        )
+
+        tags_hash: str = (",".join(tags.keys()) + ":" + ",".join(map(str, tags.values())))
         if tags_hash in self.cache:
             return self.cache[tags_hash]
 

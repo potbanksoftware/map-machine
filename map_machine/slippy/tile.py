@@ -34,8 +34,7 @@ EXTEND_TO_BIGGER_TILE: bool = False
 @dataclass
 class Tile:
     """
-    OpenStreetMap tile, square bitmap graphics displayed in a grid arrangement
-    to show a map.
+    OpenStreetMap tile, square bitmap graphics displayed in a grid arrangement to show a map.
     """
 
     x: int
@@ -47,7 +46,7 @@ class Tile:
         cls, coordinates: np.ndarray, zoom_level: int
     ) -> "Tile":
         """
-        Code from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+        Code from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames .
 
         :param coordinates: any coordinates inside tile, (latitude, longitude)
         :param zoom_level: zoom level in OpenStreetMap terminology
@@ -72,9 +71,9 @@ class Tile:
 
     def get_boundary_box(self) -> BoundaryBox:
         """
-        Get geographical boundary box of the tile: north-west and south-east
-        points.
+        Get geographical boundary box of the tile: north-west and south-east points.
         """
+
         point_1: np.ndarray = self.get_coordinates()
         point_2: np.ndarray = Tile(
             self.x + 1, self.y + 1, self.zoom_level
@@ -265,13 +264,13 @@ class Tiles:
         self, directory: Path, cache_path: Path, configuration: MapConfiguration
     ) -> None:
         """
-        Draw set of tiles as SVG file separately and rasterize them into a set
-        of PNG files with cairosvg.
+        Draw set of tiles as SVG file separately and rasterize them into a set of PNG files with cairosvg.
 
         :param directory: directory for tiles
         :param cache_path: directory for temporary OSM files
         :param configuration: drawing configuration
         """
+
         osm_data: OSMData = self.load_osm_data(cache_path)
 
         for tile in self.tiles:
@@ -305,8 +304,7 @@ class Tiles:
         redraw: bool = False,
     ) -> None:
         """
-        Draw one PNG image with all tiles and split it into a set of separate
-        PNG file with Pillow.
+        Draw one PNG image with all tiles and split it into a set of separate PNG file with Pillow.
 
         :param directory: directory for tiles
         :param cache_path: directory for temporary OSM files
@@ -314,6 +312,7 @@ class Tiles:
         :param osm_data: OpenStreetMap data
         :param redraw: update cache
         """
+
         if self.tiles_exist(directory) and not redraw:
             return
 
@@ -512,7 +511,6 @@ def generate_tiles(options: argparse.Namespace) -> None:
                 scheme, options, zoom_level
             )
             tile.draw_with_osm_data(osm_data, directory, configuration)
-
 
     elif options.tile:
         zoom_level, x, y = map(int, options.tile.split("/"))

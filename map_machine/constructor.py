@@ -1,9 +1,8 @@
 """Construct Map Machine nodes and ways."""
 import logging
-import sys
 from datetime import datetime
 from hashlib import sha256
-from typing import Any, Iterator, Optional, Union
+from typing import Any, Optional, Union
 
 import numpy as np
 from colour import Color  # type: ignore[import-untyped]
@@ -327,7 +326,7 @@ class Constructor:
         # are not empty.
         self.add_point_for_line(center_point, inners, line, outers)
 
-    def add_point_for_line(self, center_point, inners, line, outers) -> None:
+    def add_point_for_line(self, center_point: np.ndarray, inners: list[list[OSMNode]], line: Union[OSMWay, OSMRelation], outers: list[list[OSMNode]]) -> None:
         """Add icon at the center point of the way or relation."""
         if DEBUG:
             style: dict[str, Any] = {

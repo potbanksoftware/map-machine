@@ -4,7 +4,6 @@ from pathlib import Path
 __author__ = "Sergey Vartanov"
 __email__ = "me@enzet.ru"
 
-from typing import Optional
 
 HERE: Path = Path(__file__).parent
 

@@ -1,9 +1,8 @@
 """Simple OpenStreetMap renderer."""
 import argparse
 import logging
-import sys
 from pathlib import Path
-from typing import Iterator, NoReturn, Optional
+from typing import Iterator, Optional
 
 import numpy as np
 import svgwrite   # type: ignore[import-untyped]
@@ -21,7 +20,7 @@ from map_machine.geometry.boundary_box import BoundaryBox
 from map_machine.geometry.flinger import Flinger, MercatorFlinger
 from map_machine.geometry.vector import Segment
 from map_machine.map_configuration import LabelMode, MapConfiguration
-from map_machine.osm.osm_getter import NetworkError, get_osm
+from map_machine.osm.osm_getter import get_osm
 from map_machine.osm.osm_reader import OSMData, OSMNode
 from map_machine.pictogram.icon import ShapeExtractor
 from map_machine.pictogram.point import Occupied, Point
@@ -227,7 +226,7 @@ class Map:
             intersection: Intersection = Intersection(list(parts))
             intersection.draw(self.svg, True)
 
-    def draw_credits(self, size: np.ndarray):
+    def draw_credits(self, size: np.ndarray) -> None:
         """
         Add OpenStreetMap credit and the link to the project itself.
         OpenStreetMap requires to use the credit “© OpenStreetMap contributors”.

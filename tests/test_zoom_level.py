@@ -1,4 +1,5 @@
 """Test zoom level specification parsing."""
+import pytest
 from map_machine.slippy.tile import (
     ScaleConfigurationException,
     parse_zoom_level,
@@ -33,29 +34,18 @@ def test_zoom_level_mixed() -> None:
 
 def test_zoom_level_too_big() -> None:
     """Test too big zoom level."""
-    try:
+    with pytest.raises(ScaleConfigurationException):
         parse_zoom_level("21")
-    except ScaleConfigurationException:
-        return
-
-    assert False
 
 
 def test_zoom_level_negative() -> None:
     """Test negative zoom level."""
-    try:
+    with pytest.raises(ValueError):
         parse_zoom_level("-1")
-    except ValueError:
-        return
-
-    assert False
 
 
 def test_zoom_level_wrong() -> None:
     """Test too big zoom level."""
-    try:
+    with pytest.raises(ValueError):
         parse_zoom_level(",")
-    except ValueError:
-        return
 
-    assert False

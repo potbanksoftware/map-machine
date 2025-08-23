@@ -84,15 +84,16 @@ class Shape:
         id_: str,
         name: Optional[str] = None,
     ) -> "Shape":
-        """
+        r"""
         Parse shape description from structure.
 
         :param structure: input structure
         :param path: SVG path commands in string form
         :param offset: shape offset in the input file
-        :param id_: shape unique identifier
+        :param id\_: shape unique identifier
         :param name: shape text description
         """
+
         shape: "Shape" = cls(path, offset, id_, name)
 
         if "name" in structure:
@@ -118,9 +119,9 @@ class Shape:
 
     def is_default(self) -> bool:
         """
-        Return true if icon is has a default shape that doesn't represent
-        anything.
+        Return true if icon is has a default shape that doesn't represent anything.
         """
+
         return self.id_ in [DEFAULT_SHAPE_ID, DEFAULT_SMALL_SHAPE_ID]
 
     def get_path(
@@ -163,13 +164,13 @@ def parse_length(text: str) -> float:
 
 
 def verify_sketch_element(element: Element, id_: str) -> bool:
-    """
+    r"""
     Verify sketch SVG element from icon file.
 
-    :param element: sketch SVG element (element with standard Inkscape
-        identifier)
-    :param id_: element `id` attribute
-    :return: True iff SVG element has valid style
+    :param element: sketch SVG element (element with standard Inkscape identifier)
+    :param id\_: element `id` attribute
+
+    :return: True if SVG element has valid style
     """
     if "style" not in element.attrib or not element.attrib["style"]:
         return True
@@ -223,25 +224,27 @@ def verify_sketch_element(element: Element, id_: str) -> bool:
 
 def parse_configuration(root: dict, configuration: dict, group: str) -> None:
     """
-    Shape description is a probably empty dictionary with optional fields
-    `name`, `emoji`, `is_part`, `directed`, and `categories`.  Shape
-    configuration is a dictionary that contains shape descriptions.  Shape
-    descriptions may be grouped and the nesting level may be arbitrary:
+    Shape description is a probably empty dictionary with optional fields `name`, `emoji`, `is_part`, `directed`, and `categories`.
 
-    {
-        <shape id>: {<shape description>},
-        <shape id>: {<shape description>},
-        <group>: {
+    Shape configuration is a dictionary that contains shape descriptions.
+    Shape descriptions may be grouped and the nesting level may be arbitrary:
+
+    .. code-block:: json
+
+        {
             <shape id>: {<shape description>},
-            <shape id>: {<shape description>}
-        },
-        <group>: {
-            <subgroup>: {
+            <shape id>: {<shape description>},
+            <group>: {
                 <shape id>: {<shape description>},
                 <shape id>: {<shape description>}
+            },
+            <group>: {
+                <subgroup>: {
+                    <shape id>: {<shape description>},
+                    <shape id>: {<shape description>}
+                }
             }
         }
-    }
     """
     for key, value in root.items():
         if (
@@ -262,17 +265,13 @@ class ShapeExtractor:
     Extract shapes from SVG file.
 
     Shape is a single path with "id" attribute that aligned to 16×16 grid.
+
+    :param svg_file_name: input SVG file name with icons. File may contain any other irrelevant graphics.
+    :param configuration_file_name: JSON file with grouped shape descriptions
     """
 
-    def __init__(
-        self, svg_file_name: Path, configuration_file_name: Path
-    ) -> None:
-        """
-        :param svg_file_name: input SVG file name with icons.  File may contain
-            any other irrelevant graphics.
-        :param configuration_file_name: JSON file with grouped shape
-            descriptions
-        """
+    def __init__(self, svg_file_name: Path, configuration_file_name: Path) -> None:
+
         self.shapes: dict[str, Shape] = {}
 
         self.configuration: dict[str, Any] = {}
@@ -353,10 +352,10 @@ class ShapeExtractor:
             logging.error(f"Not standard ID {id_}.")
 
     def get_shape(self, id_: str) -> Shape:
-        """
+        r"""
         Get shape or None if there is no shape with such identifier.
 
-        :param id_: string icon identifier
+        :param id\_: string icon identifier
         """
         if id_ in self.shapes:
             return self.shapes[id_]

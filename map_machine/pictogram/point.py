@@ -1,5 +1,4 @@
 """Point: node representation on the map."""
-import logging
 from typing import Optional
 
 import numpy as np
@@ -18,8 +17,7 @@ __email__ = "me@enzet.ru"
 
 class Occupied:
     """
-    Structure that remembers places of the canvas occupied by elements (icons,
-    texts, shapes).
+    Structure that remembers places of the canvas occupied by elements (icons, texts, shapes).
     """
 
     def __init__(self, width: int, height: int, overlap: int) -> None:
@@ -227,11 +225,13 @@ class Point(Tagged):
         """
         Drawing text.
 
-          ######     ###  outline 2
-         #------#    ---  outline 1
-        #| Text |#
-         #------#
-          ######
+        .. code-block::
+
+            ######     ###  outline 2
+            #------#    ---  outline 1
+            #| Text |#
+            #------#
+            ######
         """
         length: int = len(text) * 6  # FIXME
 
@@ -284,9 +284,9 @@ class Point(Tagged):
 
     def get_size(self) -> np.ndarray:
         """
-        Get width and height of the point visual representation if there is
-        space for all elements.
+        Get width and height of the point visual representation if there is space for all elements.
         """
+
         icon_size: int = 16
         width: int = icon_size * (
             1 + max(2, len(self.icon_set.extra_icons) - 1)
