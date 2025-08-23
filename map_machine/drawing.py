@@ -243,7 +243,7 @@ class PNGDrawing(Drawing):
 						point_2[1],
 						point_3[0],
 						point_3[1],
-						)  # fmt: skip
+						)
 				if start_point is None:
 					start_point = point_1
 				index += 2

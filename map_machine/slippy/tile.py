@@ -61,8 +61,8 @@ EXTEND_TO_BIGGER_TILE: bool = False
 @dataclass
 class Tile:
 	"""
-    OpenStreetMap tile, square bitmap graphics displayed in a grid arrangement to show a map.
-    """
+	OpenStreetMap tile, square bitmap graphics displayed in a grid arrangement to show a map.
+	"""
 
 	x: int
 	y: int
@@ -71,11 +71,11 @@ class Tile:
 	@classmethod
 	def from_coordinates(cls, coordinates: np.ndarray, zoom_level: int) -> "Tile":
 		"""
-        Code from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames .
+		Code from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames .
 
-        :param coordinates: any coordinates inside tile, (latitude, longitude)
-        :param zoom_level: zoom level in OpenStreetMap terminology
-        """
+		:param coordinates: any coordinates inside tile, (latitude, longitude)
+		:param zoom_level: zoom level in OpenStreetMap terminology
+		"""
 		lat_rad: np.ndarray = np.radians(coordinates[0])
 		scale: float = 2.0**zoom_level
 		x: int = int((coordinates[1] + 180.0) / 360.0 * scale)
@@ -84,10 +84,10 @@ class Tile:
 
 	def get_coordinates(self) -> np.ndarray:
 		"""
-        Return geo coordinates of the north-west corner of the tile.
+		Return geo coordinates of the north-west corner of the tile.
 
-        Code from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
-        """
+		Code from https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+		"""
 		scale: float = 2.0**self.zoom_level
 		lon_deg: float = self.x / scale * 360.0 - 180.0
 		lat_rad: float = np.arctan(np.sinh(np.pi * (1 - 2 * self.y / scale)))
@@ -96,8 +96,8 @@ class Tile:
 
 	def get_boundary_box(self) -> BoundaryBox:
 		"""
-        Get geographical boundary box of the tile: north-west and south-east points.
-        """
+		Get geographical boundary box of the tile: north-west and south-east points.
+		"""
 
 		point_1: np.ndarray = self.get_coordinates()
 		point_2: np.ndarray = Tile(self.x + 1, self.y + 1, self.zoom_level).get_coordinates()
@@ -113,10 +113,10 @@ class Tile:
 
 	def load_osm_data(self, cache_path: Path) -> OSMData:
 		"""
-        Construct map data from extended boundary box.
+		Construct map data from extended boundary box.
 
-        :param cache_path: directory to store OSM data files
-        """
+		:param cache_path: directory to store OSM data files
+		"""
 		cache_file_path: Path = (cache_path / f"{self.get_extended_boundary_box().get_format()}.osm")
 		get_osm(self.get_extended_boundary_box(), cache_file_path)
 
@@ -145,12 +145,12 @@ class Tile:
 			configuration: MapConfiguration,
 			) -> None:
 		"""
-        Draw tile to SVG and PNG files.
+		Draw tile to SVG and PNG files.
 
-        :param directory_name: output directory to storing tiles
-        :param cache_path: directory to store SVG and PNG tiles
-        :param configuration: drawing configuration
-        """
+		:param directory_name: output directory to storing tiles
+		:param cache_path: directory to store SVG and PNG tiles
+		:param configuration: drawing configuration
+		"""
 		try:
 			osm_data: OSMData = self.load_osm_data(cache_path)
 		except NetworkError as error:
@@ -220,11 +220,11 @@ class Tiles:
 	@classmethod
 	def from_boundary_box(cls, boundary_box: BoundaryBox, zoom_level: int) -> "Tiles":
 		"""
-        Create minimal set of tiles that covers boundary box.
+		Create minimal set of tiles that covers boundary box.
 
-        :param boundary_box: area to be covered by tiles
-        :param zoom_level: zoom level in OpenStreetMap terminology
-        """
+		:param boundary_box: area to be covered by tiles
+		:param zoom_level: zoom level in OpenStreetMap terminology
+		"""
 		tiles: list[Tile] = []
 		tile_1: Tile = Tile.from_coordinates(boundary_box.get_left_top(), zoom_level)
 		tile_2: Tile = Tile.from_coordinates(boundary_box.get_right_bottom(), zoom_level)
@@ -253,12 +253,12 @@ class Tiles:
 
 	def draw_separately(self, directory: Path, cache_path: Path, configuration: MapConfiguration) -> None:
 		"""
-        Draw set of tiles as SVG file separately and rasterize them into a set of PNG files with cairosvg.
+		Draw set of tiles as SVG file separately and rasterize them into a set of PNG files with cairosvg.
 
-        :param directory: directory for tiles
-        :param cache_path: directory for temporary OSM files
-        :param configuration: drawing configuration
-        """
+		:param directory: directory for tiles
+		:param cache_path: directory for temporary OSM files
+		:param configuration: drawing configuration
+		"""
 
 		osm_data: OSMData = self.load_osm_data(cache_path)
 
@@ -291,14 +291,14 @@ class Tiles:
 			redraw: bool = False,
 			) -> None:
 		"""
-        Draw one PNG image with all tiles and split it into a set of separate PNG file with Pillow.
+		Draw one PNG image with all tiles and split it into a set of separate PNG file with Pillow.
 
-        :param directory: directory for tiles
-        :param cache_path: directory for temporary OSM files
-        :param configuration: drawing configuration
-        :param osm_data: OpenStreetMap data
-        :param redraw: update cache
-        """
+		:param directory: directory for tiles
+		:param cache_path: directory for temporary OSM files
+		:param configuration: drawing configuration
+		:param osm_data: OpenStreetMap data
+		:param redraw: update cache
+		"""
 
 		if self.tiles_exist(directory) and not redraw:
 			return
@@ -329,11 +329,11 @@ class Tiles:
 
 	def draw_image(self, cache_path: Path, configuration: MapConfiguration) -> None:
 		"""
-        Draw all tiles as one picture.
+		Draw all tiles as one picture.
 
-        :param cache_path: directory for temporary SVG file and OSM files
-        :param configuration: drawing configuration
-        """
+		:param cache_path: directory for temporary SVG file and OSM files
+		:param configuration: drawing configuration
+		"""
 		osm_data: OSMData = self.load_osm_data(cache_path)
 		self.draw_image_from_osm_data(cache_path, configuration, osm_data)
 

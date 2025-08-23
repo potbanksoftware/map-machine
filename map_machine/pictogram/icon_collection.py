@@ -63,19 +63,18 @@ class IconCollection:
 			add_all: bool = False,
 			) -> "IconCollection":
 		"""
-        Collect all possible icon combinations.
+		Collect all possible icon combinations.
 
-        This collection won't contain icons for tags matched with regular
-        expressions. E.g. traffic_sign=maxspeed; maxspeed=42.
+		This collection won't contain icons for tags matched with regular
+		expressions. E.g. traffic_sign=maxspeed; maxspeed=42.
 
-        :param scheme: tag specification
-        :param extractor: shape extractor for icon creation
-        :param background_color: background color
-        :param color: icon color
-        :param add_unused: create icons from shapes that have no corresponding
-            tags
-        :param add_all: create icons from all possible shapes including parts
-        """
+		:param scheme: tag specification
+		:param extractor: shape extractor for icon creation
+		:param background_color: background color
+		:param color: icon color
+		:param add_unused: create icons from shapes that have no corresponding tags
+		:param add_all: create icons from all possible shapes including parts
+		"""
 		icons: list[Icon] = []
 
 		def add(current_set: list[dict[str, str]]) -> None:
@@ -143,15 +142,15 @@ class IconCollection:
 			outline_opacity: float = 1.0,
 			) -> None:
 		"""
-        Draw the icons.
+		Draw the icons.
 
-        :param output_directory: path to the directory to store individual SVG files for icons
-        :param license_path: path to the file with license
-        :param by_name: use names instead of identifiers
-        :param color: fill color
-        :param outline: if true, draw outline beneath the icon
-        :param outline_opacity: opacity of the outline
-        """
+		:param output_directory: path to the directory to store individual SVG files for icons
+		:param license_path: path to the file with license
+		:param by_name: use names instead of identifiers
+		:param color: fill color
+		:param outline: if true, draw outline beneath the icon
+		:param outline_opacity: opacity of the outline
+		"""
 		if by_name:
 
 			def get_file_name(x: Icon) -> str:
@@ -183,14 +182,14 @@ class IconCollection:
 			scale: float = 1.0,
 			) -> None:
 		"""
-        Draw icons in the form of table.
+		Draw icons in the form of table.
 
-        :param file_name: output SVG file name
-        :param columns: number of columns in grid
-        :param step: horizontal and vertical distance between icons in grid
-        :param background_color: background color
-        :param scale: scale icon by the magnitude
-        """
+		:param file_name: output SVG file name
+		:param columns: number of columns in grid
+		:param step: horizontal and vertical distance between icons in grid
+		:param background_color: background color
+		:param scale: scale icon by the magnitude
+		"""
 		point: np.ndarray = np.array((step / 2.0 * scale, step / 2.0 * scale))
 		width: float = step * columns * scale
 
@@ -220,8 +219,8 @@ class IconCollection:
 
 def draw_icons() -> None:
 	"""
-    Draw all possible icon shapes combinations as grid in one SVG file and as individual SVG files.
-    """
+	Draw all possible icon shapes combinations as grid in one SVG file and as individual SVG files.
+	"""
 
 	scheme: Scheme = Scheme.from_file(workspace.DEFAULT_SCHEME_PATH)
 	extractor: ShapeExtractor = ShapeExtractor(workspace.ICONS_PATH, workspace.ICONS_CONFIG_PATH)

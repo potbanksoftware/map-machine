@@ -52,17 +52,17 @@ class BoundaryBox:
 	@classmethod
 	def from_text(cls, boundary_box: str) -> "BoundaryBox":
 		"""
-        Parse boundary box string representation.
+		Parse boundary box string representation.
 
-        Note, that:
-            left < right
-            bottom < top
+		Note, that:
+			left < right
+			bottom < top
 
-        :param boundary_box: boundary box string representation in the form of
-            <minimum longitude>,<minimum latitude>,
-            <maximum longitude>,<maximum latitude> or simply
-            <left>,<bottom>,<right>,<top>.
-        """
+		:param boundary_box: boundary box string representation in the form of
+			<minimum longitude>,<minimum latitude>,
+			<maximum longitude>,<maximum latitude> or simply
+			<left>,<bottom>,<right>,<top>.
+		"""
 		boundary_box = boundary_box.replace(' ', '')
 
 		matcher: Optional[re.Match] = re.match(
@@ -99,13 +99,13 @@ class BoundaryBox:
 			height: float,
 			) -> "BoundaryBox":
 		"""
-        Compute boundary box from center coordinates, zoom level and image size.
+		Compute boundary box from center coordinates, zoom level and image size.
 
-        :param coordinates: boundary box central coordinates
-        :param zoom_level: resulting image zoom level
-        :param width: resulting image width
-        :param height: resulting image height
-        """
+		:param coordinates: boundary box central coordinates
+		:param zoom_level: resulting image zoom level
+		:param width: resulting image width
+		:param height: resulting image height
+		"""
 		lat_rad: np.ndarray = np.radians(coordinates[0])
 		n: float = 2.0**(zoom_level + 8.0)
 
@@ -155,12 +155,12 @@ class BoundaryBox:
 
 	def get_format(self) -> str:
 		"""
-        Get text representation of the boundary box.
+		Get text representation of the boundary box.
 
-        Boundary box format is
-        <longitude 1>,<latitude 1>,<longitude 2>,<latitude 2>.  Coordinates are
-        rounded to three digits after comma.
-        """
+		Boundary box format is
+		<longitude 1>,<latitude 1>,<longitude 2>,<latitude 2>.  Coordinates are
+		rounded to three digits after comma.
+		"""
 		left: float = np.floor(self.left * 1000.0) / 1000.0
 		bottom: float = np.floor(self.bottom * 1000.0) / 1000.0
 		right: float = np.ceil(self.right * 1000.0) / 1000.0

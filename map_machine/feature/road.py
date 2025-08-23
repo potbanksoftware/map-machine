@@ -101,12 +101,12 @@ class RoadPart:
 			scale: float,
 			) -> None:
 		"""
-        Initialize road part with two end points.
+		Initialize road part with two end points.
 
-        :param point_1: start point of the road part
-        :param point_2: end point of the road part
-        :param lanes: lane specification
-        """
+		:param point_1: start point of the road part
+		:param point_2: end point of the road part
+		:param lanes: lane specification
+		"""
 		self.point_1: np.ndarray = point_1
 		self.point_2: np.ndarray = point_2
 		self.lanes: list[Lane] = lanes
@@ -192,7 +192,7 @@ class RoadPart:
 				fill="none",
 				stroke="#FF0000",
 				stroke_width=0.5,
-				)  # fmt: skip
+				)
 		drawing.add(line)
 		line = drawing.path(
 				(
@@ -204,7 +204,7 @@ class RoadPart:
 				fill="none",
 				stroke="#0000FF",
 				stroke_width=0.5,
-				)  # fmt: skip
+				)
 		drawing.add(line)
 
 		opacity: float = 0.4
@@ -264,7 +264,7 @@ class RoadPart:
 					'L',
 					self.right_connection,
 					'Z',
-					]  # fmt: skip
+					]
 			drawing.add(drawing.path(path_commands, fill="#CCCCCC"))
 
 	def draw_entrance(self, drawing: svgwrite.Drawing, is_debug: bool = False) -> None:
@@ -280,7 +280,7 @@ class RoadPart:
 					'L',
 					self.left_connection,
 					'Z',
-					]  # fmt: skip
+					]
 			if is_debug:
 				path = drawing.path(
 						path_commands,
@@ -308,10 +308,10 @@ class RoadPart:
 
 class Intersection:
 	"""
-    An intersection of the roads, that is described by its parts.
+	An intersection of the roads, that is described by its parts.
 
-    All first points of the road parts should be the same.
-    """
+	All first points of the road parts should be the same.
+	"""
 
 	def __init__(self, parts: list[RoadPart]) -> None:
 		self.parts: list[RoadPart] = sorted(parts, key=lambda x: x.get_angle())
@@ -378,7 +378,7 @@ class Intersection:
 				part.draw_entrance(drawing)
 		if not is_debug:
 			# for part in self.parts:
-			#     part.draw_lanes(drawing, scale)
+			# 	part.draw_lanes(drawing, scale)
 			drawing.add(drawing.path(inner_commands, fill="#FF8888"))
 
 
@@ -611,14 +611,14 @@ def get_curve_points(
 		is_end: bool,
 		) -> list[np.ndarray]:
 	"""
-    TODO: add description.
+	TODO: add description.
 
-    :param road: road segment
-    :param center: road intersection point
-    :param road_end: end point of the road segment
-    :param placement_offset: offset based on placement tag value
-    :param is_end: whether the point represents road end
-    """
+	:param road: road segment
+	:param center: road intersection point
+	:param road_end: end point of the road segment
+	:param placement_offset: offset based on placement tag value
+	:param is_end: whether the point represents road end
+	"""
 	width: float = road.width / 2.0 * road.scale
 
 	direction: np.ndarray = (center - road_end) / np.linalg.norm(center - road_end)

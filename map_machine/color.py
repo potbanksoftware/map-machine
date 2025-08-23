@@ -40,19 +40,19 @@ __all__ = ["get_gradient_color", "is_bright"]
 
 def is_bright(color: Color) -> bool:
 	"""
-    Check whether color is bright enough to have black outline instead of white.
-    """
+	Check whether color is bright enough to have black outline instead of white.
+	"""
 	return (0.2126 * color.red + 0.7152 * color.green + 0.0722 * color.blue > 0.78125)
 
 
 def get_gradient_color(value: Any, bounds: MinMax, colors: list[Color]) -> Color:
 	"""
-    Get color from the color scale for the value.
+	Get color from the color scale for the value.
 
-    :param value: given value (should be in bounds)
-    :param bounds: maximum and minimum values
-    :param colors: color scale
-    """
+	:param value: given value (should be in bounds)
+	:param bounds: maximum and minimum values
+	:param colors: color scale
+	"""
 	color_length: int = len(colors) - 1
 	scale: list[Color] = colors + [Color("black")]
 

@@ -216,10 +216,10 @@ def draw_walls(
 		use_building_colors: bool,
 		) -> None:
 	"""
-    Draw walls for buildings as a quadrangle.
+	Draw walls for buildings as a quadrangle.
 
-    Color of the wall is based on illumination.
-    """
+	Color of the wall is based on illumination.
+	"""
 	color: Color = (building.wall_color if use_building_colors else building.wall_default_color)
 
 	if building.is_construction:

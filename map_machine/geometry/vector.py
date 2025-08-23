@@ -38,10 +38,10 @@ __all__ = ["Line", "Polyline", "Segment", "compute_angle", "norm", "turn_by_angl
 
 def compute_angle(vector: np.ndarray) -> float:
 	"""
-    For the given vector compute an angle between it and (1, 0) vector.
+	For the given vector compute an angle between it and (1, 0) vector.
 
-    The result is in [0, 2π].
-    """
+	The result is in [0, 2π].
+	"""
 	if vector[0] == 0.0:
 		if vector[1] > 0.0:
 			return np.pi / 2.0
@@ -104,17 +104,17 @@ class Line:
 
 	def __init__(self, start: np.ndarray, end: np.ndarray) -> None:
 		# if start.near(end):
-		#     util.error("cannot create line by one point")
+		# 	util.error("cannot create line by one point")
 		self.a: float = start[1] - end[1]
 		self.b: float = end[0] - start[0]
 		self.c: float = start[0] * end[1] - end[0] * start[1]
 
 	def parallel_shift(self, shift: np.ndarray) -> None:
 		"""
-        Shift current vector according with shift.
+		Shift current vector according with shift.
 
-        :param shift: shift vector
-        """
+		:param shift: shift vector
+		"""
 		self.c -= self.a * shift[0] + self.b * shift[1]
 
 	def is_parallel(self, other: "Line") -> bool:
@@ -159,11 +159,10 @@ class Segment:
 
 	def intersection(self, other: "Segment") -> Optional[list[float]]:
 		"""
-        Find and intersection point between two segments.
+		Find and intersection point between two segments.
 
-        :return: `None` if segments don't intersect, [x, y] coordinates of
-            the resulting point otherwise.
-        """
+		:return: `None` if segments don't intersect, [x, y] coordinates of the resulting point otherwise.
+		"""
 		divisor: float = (self.point_1[0] - self.point_2[0]) * (other.point_1[1] - other.point_2[1]
 																) - (self.point_1[1] - self.point_2[1]) * (
 																		other.point_1[0] - other.point_2[0]

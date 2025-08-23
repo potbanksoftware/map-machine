@@ -52,12 +52,12 @@ class NetworkError(Exception):
 
 def get_osm(boundary_box: BoundaryBox, cache_file_path: Path, to_update: bool = False) -> str:
 	"""
-    Download OSM data from the web or get if from the cache.
+	Download OSM data from the web or get if from the cache.
 
-    :param boundary_box: borders of the map part to download
-    :param cache_file_path: cache file to store downloaded OSM data
-    :param to_update: update cache files
-    """
+	:param boundary_box: borders of the map part to download
+	:param cache_file_path: cache file to store downloaded OSM data
+	:param to_update: update cache files
+	"""
 	if not to_update and cache_file_path.is_file():
 		with cache_file_path.open(encoding="utf-8") as output_file:
 			return output_file.read()
@@ -87,12 +87,12 @@ def get_osm(boundary_box: BoundaryBox, cache_file_path: Path, to_update: bool = 
 
 def get_data(address: str, parameters: dict[str, str]) -> bytes:
 	"""
-    Construct Internet page URL and get its descriptor.
+	Construct Internet page URL and get its descriptor.
 
-    :param address: URL without parameters
-    :param parameters: URL parameters
-    :return: connection descriptor
-    """
+	:param address: URL without parameters
+	:param parameters: URL parameters
+	:return: connection descriptor
+	"""
 	logging.info(f"Getting {address}...")
 	pool_manager: urllib3.PoolManager = urllib3.PoolManager()
 	urllib3.disable_warnings()

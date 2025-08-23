@@ -86,11 +86,11 @@ TIME_COLOR_SCALE: list[Color] = [
 
 def line_center(nodes: list[OSMNode], flinger: Flinger) -> tuple[np.ndarray, np.ndarray]:
 	"""
-    Get geometric center of nodes set.
+	Get geometric center of nodes set.
 
-    :param nodes: node list
-    :param flinger: flinger that remap geo positions
-    """
+	:param nodes: node list
+	:param flinger: flinger that remap geo positions
+	"""
 	boundary: list[MinMax] = [MinMax(), MinMax()]
 
 	for node in nodes:
@@ -109,20 +109,20 @@ def get_user_color(text: str, seed: str) -> Color:
 
 def get_time_color(time: Optional[datetime], boundaries: MinMax) -> Color:
 	"""
-    Generate color based on time.
+	Generate color based on time.
 
-    :param time: current element creation time
-    :param boundaries: minimum and maximum element creation time on the map
-    """
+	:param time: current element creation time
+	:param boundaries: minimum and maximum element creation time on the map
+	"""
 	return get_gradient_color(time if time else boundaries.max_, boundaries, TIME_COLOR_SCALE)
 
 
 def glue(ways: list[OSMWay]) -> list[list[OSMNode]]:
 	"""
-    Try to glue ways that share nodes.
+	Try to glue ways that share nodes.
 
-    :param ways: ways to glue
-    """
+	:param ways: ways to glue
+	"""
 	result: list[list[OSMNode]] = []
 	to_process: set[tuple[OSMNode, ...]] = set()
 
@@ -234,12 +234,12 @@ class Constructor:
 			outers: list[list[OSMNode]],
 			) -> None:
 		"""
-        Construct way or relation.
+		Construct way or relation.
 
-        :param line: OpenStreetMap way or relation
-        :param inners: list of polygons that compose inner boundary
-        :param outers: list of polygons that compose outer boundary
-        """
+		:param line: OpenStreetMap way or relation
+		:param inners: list of polygons that compose inner boundary
+		:param outers: list of polygons that compose outer boundary
+		"""
 		assert len(outers) >= 1
 
 		if len(outers[0]) == 0:

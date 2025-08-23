@@ -123,14 +123,14 @@ class Shape:
 			name: Optional[str] = None,
 			) -> "Shape":
 		r"""
-        Parse shape description from structure.
+		Parse shape description from structure.
 
-        :param structure: input structure
-        :param path: SVG path commands in string form
-        :param offset: shape offset in the input file
-        :param id\_: shape unique identifier
-        :param name: shape text description
-        """
+		:param structure: input structure
+		:param path: SVG path commands in string form
+		:param offset: shape offset in the input file
+		:param id\_: shape unique identifier
+		:param name: shape text description
+		"""
 
 		shape: "Shape" = cls(path, offset, id_, name)
 
@@ -157,8 +157,8 @@ class Shape:
 
 	def is_default(self) -> bool:
 		"""
-        Return true if icon is has a default shape that doesn't represent anything.
-        """
+		Return true if icon is has a default shape that doesn't represent anything.
+		"""
 
 		return self.id_ in [DEFAULT_SHAPE_ID, DEFAULT_SMALL_SHAPE_ID]
 
@@ -169,12 +169,12 @@ class Shape:
 			scale: np.ndarray = np.array((1.0, 1.0)),
 			) -> SVGPath:
 		"""
-        Draw icon into SVG file.
+		Draw icon into SVG file.
 
-        :param point: icon position
-        :param offset: additional offset
-        :param scale: scale resulting image
-        """
+		:param point: icon position
+		:param offset: additional offset
+		:param scale: scale resulting image
+		"""
 		transformations: list[str] = []
 		shift: np.ndarray = point + offset
 
@@ -201,13 +201,13 @@ def parse_length(text: str) -> float:
 
 def verify_sketch_element(element: Element, id_: str) -> bool:
 	r"""
-    Verify sketch SVG element from icon file.
+	Verify sketch SVG element from icon file.
 
-    :param element: sketch SVG element (element with standard Inkscape identifier)
-    :param id\_: element `id` attribute
+	:param element: sketch SVG element (element with standard Inkscape identifier)
+	:param id\_: element `id` attribute
 
-    :return: True if SVG element has valid style
-    """
+	:return: True if SVG element has valid style
+	"""
 	if "style" not in element.attrib or not element.attrib["style"]:
 		return True
 
@@ -247,28 +247,28 @@ def verify_sketch_element(element: Element, id_: str) -> bool:
 
 def parse_configuration(root: dict, configuration: dict, group: str) -> None:
 	"""
-    Shape description is a probably empty dictionary with optional fields `name`, `emoji`, `is_part`, `directed`, and `categories`.
+	Shape description is a probably empty dictionary with optional fields `name`, `emoji`, `is_part`, `directed`, and `categories`.
 
-    Shape configuration is a dictionary that contains shape descriptions.
-    Shape descriptions may be grouped and the nesting level may be arbitrary:
+	Shape configuration is a dictionary that contains shape descriptions.
+	Shape descriptions may be grouped and the nesting level may be arbitrary:
 
-    .. code-block:: json
+	.. code-block:: json
 
-        {
-            <shape id>: {<shape description>},
-            <shape id>: {<shape description>},
-            <group>: {
-                <shape id>: {<shape description>},
-                <shape id>: {<shape description>}
-            },
-            <group>: {
-                <subgroup>: {
-                    <shape id>: {<shape description>},
-                    <shape id>: {<shape description>}
-                }
-            }
-        }
-    """
+		{
+			<shape id>: {<shape description>},
+			<shape id>: {<shape description>},
+			<group>: {
+				<shape id>: {<shape description>},
+				<shape id>: {<shape description>}
+			},
+			<group>: {
+				<subgroup>: {
+					<shape id>: {<shape description>},
+					<shape id>: {<shape description>}
+				}
+			}
+		}
+	"""
 	for key, value in root.items():
 		if (
 				not value or "name" in value or "emoji" in value or "is_part" in value or "directed" in value
@@ -281,13 +281,13 @@ def parse_configuration(root: dict, configuration: dict, group: str) -> None:
 
 class ShapeExtractor:
 	"""
-    Extract shapes from SVG file.
+	Extract shapes from SVG file.
 
-    Shape is a single path with "id" attribute that aligned to 16×16 grid.
+	Shape is a single path with "id" attribute that aligned to 16×16 grid.
 
-    :param svg_file_name: input SVG file name with icons. File may contain any other irrelevant graphics.
-    :param configuration_file_name: JSON file with grouped shape descriptions
-    """
+	:param svg_file_name: input SVG file name with icons. File may contain any other irrelevant graphics.
+	:param configuration_file_name: JSON file with grouped shape descriptions
+	"""
 
 	def __init__(self, svg_file_name: Path, configuration_file_name: Path) -> None:
 
@@ -308,10 +308,10 @@ class ShapeExtractor:
 
 	def parse(self, node: Element) -> None:
 		"""
-        Extract icon paths into a map.
+		Extract icon paths into a map.
 
-        :param node: XML node that contains icon
-        """
+		:param node: XML node that contains icon
+		"""
 		if node.tag.endswith("}g") or node.tag.endswith("}svg"):
 			for sub_node in node:
 				self.parse(sub_node)
@@ -364,10 +364,10 @@ class ShapeExtractor:
 
 	def get_shape(self, id_: str) -> Shape:
 		r"""
-        Get shape or None if there is no shape with such identifier.
+		Get shape or None if there is no shape with such identifier.
 
-        :param id\_: string icon identifier
-        """
+		:param id\_: string icon identifier
+		"""
 		if id_ in self.shapes:
 			return self.shapes[id_]
 
@@ -399,16 +399,15 @@ class ShapeSpecification:
 			scale: float = 1.0,
 			) -> None:
 		"""
-        Draw icon shape into SVG file.
+		Draw icon shape into SVG file.
 
-        :param svg: output SVG file
-        :param point: 2D position of the shape centre
-        :param tags: tags to be displayed as a tooltip, if tooltip should not be
-            displayed, this argument should be None
-        :param outline: draw outline for the shape
-        :param outline_opacity: opacity of the outline
-        :param scale: scale icon by the magnitude
-        """
+		:param svg: output SVG file
+		:param point: 2D position of the shape centre
+		:param tags: tags to be displayed as a tooltip, if tooltip should not be displayed, this argument should be None
+		:param outline: draw outline for the shape
+		:param outline_opacity: opacity of the outline
+		:param scale: scale icon by the magnitude
+		"""
 		scale_vector: np.ndarray = np.array((scale, scale))
 		if self.flip_vertically:
 			scale_vector = np.array((scale, -scale))
@@ -508,14 +507,14 @@ class Icon:
 			scale: float = 1.0,
 			) -> None:
 		"""
-        Draw icon to SVG.
+		Draw icon to SVG.
 
-        :param svg: output SVG file
-        :param point: 2D position of the icon centre
-        :param tags: tags to be displayed as a tooltip
-        :param outline: draw outline for the icon
-        :param scale: scale icon by the magnitude
-        """
+		:param svg: output SVG file
+		:param point: 2D position of the icon centre
+		:param tags: tags to be displayed as a tooltip
+		:param outline: draw outline for the icon
+		:param scale: scale icon by the magnitude
+		"""
 		if outline:
 			bright: bool = is_bright(self.shape_specifications[0].color)
 			opacity: float = 0.7 if bright else 0.5
@@ -537,13 +536,13 @@ class Icon:
 			outline_opacity: float = 1.0,
 			) -> None:
 		"""
-        Draw icon to the SVG file.
+		Draw icon to the SVG file.
 
-        :param file_name: output SVG file name
-        :param color: fill color
-        :param outline: if true, draw outline beneath the icon
-        :param outline_opacity: opacity of the outline
-        """
+		:param file_name: output SVG file name
+		:param color: fill color
+		:param outline: if true, draw outline beneath the icon
+		:param outline_opacity: opacity of the outline
+		"""
 		svg: Drawing = Drawing(str(file_name), (16, 16))
 
 		if outline:

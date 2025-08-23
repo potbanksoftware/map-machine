@@ -46,8 +46,8 @@ __all__ = ["Occupied", "Point"]
 
 class Occupied:
 	"""
-    Structure that remembers places of the canvas occupied by elements (icons, texts, shapes).
-    """
+	Structure that remembers places of the canvas occupied by elements (icons, texts, shapes).
+	"""
 
 	def __init__(self, width: int, height: int, overlap: int) -> None:
 		self.matrix = np.full((int(width), int(height)), False, dtype=bool)
@@ -78,10 +78,10 @@ class Occupied:
 
 class Point(Tagged):
 	"""
-    Object on the map with no dimensional attributes.
+	Object on the map with no dimensional attributes.
 
-    It may have icons and labels.
-    """
+	It may have icons and labels.
+	"""
 
 	def __init__(
 			self,
@@ -241,16 +241,16 @@ class Point(Tagged):
 			is_debug: bool = False,
 			) -> None:
 		"""
-        Drawing text.
+		Drawing text.
 
-        .. code-block::
+		.. code-block::
 
-            ######     ###  outline 2
-            #------#    ---  outline 1
-            #| Text |#
-            #------#
-            ######
-        """
+			######     ###  outline 2
+			#------#    ---  outline 1
+			#| Text |#
+			#------#
+			######
+		"""
 		length: int = len(text) * 6  # FIXME
 
 		if occupied:
@@ -298,8 +298,8 @@ class Point(Tagged):
 
 	def get_size(self) -> np.ndarray:
 		"""
-        Get width and height of the point visual representation if there is space for all elements.
-        """
+		Get width and height of the point visual representation if there is space for all elements.
+		"""
 
 		icon_size: int = 16
 		width: int = icon_size * (1 + max(2, len(self.icon_set.extra_icons) - 1))

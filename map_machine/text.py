@@ -55,12 +55,12 @@ class Label:
 
 def get_address(tags: dict[str, Any], processed: set[str], label_mode: LabelMode) -> list[str]:
 	"""
-    Construct address text list from the tags.
+	Construct address text list from the tags.
 
-    :param tags: OSM node, way or relation tags
-    :param processed: set of processed tag keys
-    :param label_mode: captions mode
-    """
+	:param tags: OSM node, way or relation tags
+	:param processed: set of processed tag keys
+	:param label_mode: captions mode
+	"""
 	address: list[str] = []
 
 	tag_names: list[str] = ["housenumber"]
@@ -78,10 +78,10 @@ def get_address(tags: dict[str, Any], processed: set[str], label_mode: LabelMode
 
 def format_voltage(value: str) -> str:
 	"""
-    Format voltage value to more human-readable form.
+	Format voltage value to more human-readable form.
 
-    :param value: presumably string representation of integer, in Volts
-    """
+	:param value: presumably string representation of integer, in Volts
+	"""
 	try:
 		int_value: int = int(value)
 		if int_value % 1000 == 0:

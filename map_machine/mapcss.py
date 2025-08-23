@@ -36,6 +36,7 @@ from typing import Optional, TextIO
 from colour import Color  # type: ignore[import-untyped]
 
 # this package
+from map_machine import __author__
 from map_machine.osm.osm_reader import STAGES_OF_DECAY
 from map_machine.pictogram.icon import ShapeExtractor
 from map_machine.pictogram.icon_collection import IconCollection
@@ -119,14 +120,14 @@ class MapCSSWriter:
 			opacity: Optional[float] = None,
 			) -> str:
 		"""
-        Add MapCSS 0.2 selector for node, way, relation, or area.
+		Add MapCSS 0.2 selector for node, way, relation, or area.
 
-        :param target: `node`, `way`, `relation`, or `area`
-        :param matcher: tag matcher of Map Machine scheme
-        :param prefix: tag prefix
-        :param opacity: icon opacity
-        :return: string representation of selector
-        """
+		:param target: `node`, `way`, `relation`, or `area`
+		:param matcher: tag matcher of Map Machine scheme
+		:param prefix: tag prefix
+		:param opacity: icon opacity
+		:return: string representation of selector
+		"""
 		elements: dict[str, str] = {}
 
 		for value in matcher.tags.values():

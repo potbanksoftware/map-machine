@@ -105,11 +105,11 @@ class Tagged:
 
 	def get_tag(self, key: str) -> Optional[str]:
 		"""
-        Get tag value or None if it doesn't exist.
+		Get tag value or None if it doesn't exist.
 
-        :param key: tag key
-        :return: tag value or None
-        """
+		:param key: tag key
+		:return: tag value or None
+		"""
 		if key in self.tags:
 			return self.tags[key]
 		return None
@@ -162,10 +162,10 @@ class Tagged:
 @dataclass(eq=False)
 class OSMNode(Tagged):
 	"""
-    OpenStreetMap node.
+	OpenStreetMap node.
 
-    See https://wiki.openstreetmap.org/wiki/Node
-    """
+	See https://wiki.openstreetmap.org/wiki/Node
+	"""
 
 	id_: int
 	coordinates: np.ndarray
@@ -195,10 +195,10 @@ class OSMNode(Tagged):
 	@classmethod
 	def parse_from_structure(cls, structure: dict[str, Any]) -> "OSMNode":
 		"""
-        Parse node from Overpass-like structure.
+		Parse node from Overpass-like structure.
 
-        :param structure: input structure
-        """
+		:param structure: input structure
+		"""
 		return cls(
 				structure.get("tags", {}),
 				structure["id"],
@@ -229,10 +229,10 @@ class OSMNode(Tagged):
 @dataclass
 class OSMWay(Tagged):
 	"""
-    OpenStreetMap way.
+	OpenStreetMap way.
 
-    See https://wiki.openstreetmap.org/wiki/Way
-    """
+	See https://wiki.openstreetmap.org/wiki/Way
+	"""
 
 	id_: int
 	nodes: list[OSMNode] = field(default_factory=list)
@@ -262,11 +262,11 @@ class OSMWay(Tagged):
 	@classmethod
 	def parse_from_structure(cls, structure: dict[str, Any], nodes: dict[int, OSMNode]) -> "OSMWay":
 		"""
-        Parse way from Overpass-like structure.
+		Parse way from Overpass-like structure.
 
-        :param structure: input structure
-        :param nodes: node structure
-        """
+		:param structure: input structure
+		:param nodes: node structure
+		"""
 		return cls(
 				structure.get("tags", {}),
 				structure["id"],
@@ -296,10 +296,10 @@ class OSMMember:
 @dataclass
 class OSMRelation(Tagged):
 	"""
-    OpenStreetMap relation.
+	OpenStreetMap relation.
 
-    See https://wiki.openstreetmap.org/wiki/Relation
-    """
+	See https://wiki.openstreetmap.org/wiki/Relation
+	"""
 
 	id_: int
 	members: Optional[list[OSMMember]]
@@ -342,10 +342,10 @@ class OSMRelation(Tagged):
 	@classmethod
 	def parse_from_structure(cls, structure: dict[str, Any]) -> "OSMRelation":
 		"""
-        Parse relation from Overpass-like structure.
+		Parse relation from Overpass-like structure.
 
-        :param structure: input structure
-        """
+		:param structure: input structure
+		"""
 		return cls(
 				structure["tags"],
 				structure["id"],
@@ -413,10 +413,10 @@ class OSMData:
 
 	def parse_overpass(self, file_name: Path) -> None:
 		"""
-        Parse JSON structure extracted from Overpass API.
+		Parse JSON structure extracted from Overpass API.
 
-        See https://wiki.openstreetmap.org/wiki/Overpass_API
-        """
+		See https://wiki.openstreetmap.org/wiki/Overpass_API
+		"""
 		with file_name.open(encoding="utf-8") as input_file:
 			structure = json.load(input_file)
 
@@ -450,22 +450,22 @@ class OSMData:
 
 	def parse_osm_file(self, file_name: Path) -> None:
 		"""
-        Parse OSM XML file.
+		Parse OSM XML file.
 
-        See https://wiki.openstreetmap.org/wiki/OSM_XML
+		See https://wiki.openstreetmap.org/wiki/OSM_XML
 
-        :param file_name: input XML file
-        :return: parsed map
-        """
+		:param file_name: input XML file
+		:return: parsed map
+		"""
 		self.parse_osm(ElementTree.parse(file_name).getroot())
 
 	def parse_osm_text(self, text: str) -> None:
 		"""
-        Parse OSM XML data from text representation.
+		Parse OSM XML data from text representation.
 
-        :param text: XML text representation
-        :return: parsed map
-        """
+		:param text: XML text representation
+		:return: parsed map
+		"""
 		self.parse_osm(ElementTree.fromstring(text))
 
 	def parse_osm(
@@ -476,13 +476,13 @@ class OSMData:
 			parse_relations: bool = True,
 			) -> None:
 		"""
-        Parse OSM XML data.
+		Parse OSM XML data.
 
-        :param root: top element of XML data
-        :param parse_nodes: whether nodes should be parsed
-        :param parse_ways: whether ways should be parsed
-        :param parse_relations: whether relations should be parsed
-        """
+		:param root: top element of XML data
+		:param parse_nodes: whether nodes should be parsed
+		:param parse_ways: whether ways should be parsed
+		:param parse_relations: whether relations should be parsed
+		"""
 		for element in root:
 			if element.tag == "bounds":
 				self.parse_bounds(element)

@@ -58,11 +58,11 @@ class Figure(Tagged):
 
 	def get_path(self, flinger: Flinger, offset: np.ndarray = np.array((0.0, 0.0))) -> str:
 		"""
-        Get SVG path commands.
+		Get SVG path commands.
 
-        :param flinger: converter for geo coordinates
-        :param offset: offset vector
-        """
+		:param flinger: converter for geo coordinates
+		:param offset: offset vector
+		"""
 		path: str = ''
 
 		for outer_nodes in self.outers:
@@ -93,11 +93,11 @@ class StyledFigure(Figure):
 			offset: np.ndarray = np.array((0.0, 0.0)),
 			) -> str:
 		"""
-        Get SVG path commands.
+		Get SVG path commands.
 
-        :param flinger: converter for geo coordinates
-        :param offset: offset vector
-        """
+		:param flinger: converter for geo coordinates
+		:param offset: offset vector
+		"""
 		path: str = ''
 
 		for outer_nodes in self.outers:
@@ -112,10 +112,10 @@ class StyledFigure(Figure):
 
 	def get_layer(self) -> float:
 		"""
-        Get figure layer value or 0 if it is not specified.
+		Get figure layer value or 0 if it is not specified.
 
-        TODO: support values separated by "," or ";".
-        """
+		TODO: support values separated by "," or ";".
+		"""
 		try:
 			if "layer" in self.tags:
 				return float(self.tags["layer"])
@@ -133,10 +133,10 @@ class StyledFigure(Figure):
 
 def is_clockwise(polygon: list[OSMNode]) -> bool:
 	"""
-    Return true if polygon nodes are in clockwise order.
+	Return true if polygon nodes are in clockwise order.
 
-    :param polygon: list of OpenStreetMap nodes
-    """
+	:param polygon: list of OpenStreetMap nodes
+	"""
 	count: float = 0.0
 	for index, node in enumerate(polygon):
 		next_index: int = 0 if index == len(polygon) - 1 else index + 1
@@ -148,19 +148,19 @@ def is_clockwise(polygon: list[OSMNode]) -> bool:
 
 def make_clockwise(polygon: list[OSMNode]) -> list[OSMNode]:
 	"""
-    Make polygon nodes clockwise.
+	Make polygon nodes clockwise.
 
-    :param polygon: list of OpenStreetMap nodes
-    """
+	:param polygon: list of OpenStreetMap nodes
+	"""
 	return polygon if is_clockwise(polygon) else list(reversed(polygon))
 
 
 def make_counter_clockwise(polygon: list[OSMNode]) -> list[OSMNode]:
 	"""
-    Make polygon nodes counter-clockwise.
+	Make polygon nodes counter-clockwise.
 
-    :param polygon: list of OpenStreetMap nodes
-    """
+	:param polygon: list of OpenStreetMap nodes
+	"""
 	return polygon if not is_clockwise(polygon) else list(reversed(polygon))
 
 
