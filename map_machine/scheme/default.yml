@@ -523,7 +523,7 @@ node_icons:
     - tags: {amenity: car_sharing}
       shapes: [{shape: car, offset: [0, 3]}, {shape: sharing, offset: [0, -4]}]
     - tags: {amenity: car_wash}
-      shapes: 
+      shapes:
       - {shape: car, offset: [0, 3]}
       - {shape: shower_head, offset: [0, -4]}
       # Place of worship

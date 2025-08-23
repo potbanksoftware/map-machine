@@ -1,52 +1,57 @@
-"""Entry point for element drawing: nodes, ways, and relations."""
+"""
+Entry point for element drawing: nodes, ways, and relations.
+"""
+
+# stdlib
 import argparse
 from pathlib import Path
 
+# this package
 from map_machine.element.grid import Grid
-from map_machine.osm.osm_reader import Tags, OSMNode
+from map_machine.osm.osm_reader import OSMNode, Tags
+
+__all__ = ["draw_area", "draw_element", "draw_node", "draw_way"]
 
 
 def draw_node(tags: Tags, path: Path) -> None:
-    """Draw separate node."""
-    grid: Grid = Grid(show_credit=False, margin=7.5)
-    grid.add_node(tags, 0, 0)
-    grid.draw(path)
+	"""Draw separate node."""
+	grid: Grid = Grid(show_credit=False, margin=7.5)
+	grid.add_node(tags, 0, 0)
+	grid.draw(path)
 
 
 def draw_way(tags: Tags, path: Path) -> None:
-    """Draw way."""
-    grid: Grid = Grid(show_credit=False, margin=3.5)
-    node_1: OSMNode = grid.add_node({}, 0, 0)
-    node_2: OSMNode = grid.add_node({}, 1, 1)
-    grid.add_way(tags, [node_1, node_2])
-    grid.draw(path)
+	"""Draw way."""
+	grid: Grid = Grid(show_credit=False, margin=3.5)
+	node_1: OSMNode = grid.add_node({}, 0, 0)
+	node_2: OSMNode = grid.add_node({}, 1, 1)
+	grid.add_way(tags, [node_1, node_2])
+	grid.draw(path)
 
 
 def draw_area(tags: Tags, path: Path) -> None:
-    """Draw closed way that should be interpreted as an area."""
-    grid: Grid = Grid(show_credit=False, margin=0.5)
-    node: OSMNode = grid.add_node({}, 0, 0)
-    nodes: list[OSMNode] = [
-        node,
-        grid.add_node({}, 0, 1),
-        grid.add_node({}, 1, 1),
-        grid.add_node({}, 1, 0),
-        node,
-    ]
-    grid.add_way(tags, nodes)
-    grid.draw(path)
+	"""Draw closed way that should be interpreted as an area."""
+	grid: Grid = Grid(show_credit=False, margin=0.5)
+	node: OSMNode = grid.add_node({}, 0, 0)
+	nodes: list[OSMNode] = [
+			node,
+			grid.add_node({}, 0, 1),
+			grid.add_node({}, 1, 1),
+			grid.add_node({}, 1, 0),
+			node,
+			]
+	grid.add_way(tags, nodes)
+	grid.draw(path)
 
 
 def draw_element(options: argparse.Namespace) -> None:
-    """Entry point for element drawing."""
-    tags_description: Tags = {
-        x.split("=")[0]: x.split("=")[1] for x in options.tags.split(",")
-    }
-    if options.type == "node":
-        draw_node(tags_description, Path(options.output_file))
-    elif options.type == "way":
-        draw_way(tags_description, Path(options.output_file))
-    elif options.type == "area":
-        draw_area(tags_description, Path(options.output_file))
-    else:
-        raise ValueError(f"Unknown element type `{options.type}`, please choose from `node`, `way`, and `area`.")
+	"""Entry point for element drawing."""
+	tags_description: Tags = {x.split('=')[0]: x.split('=')[1] for x in options.tags.split(',')}
+	if options.type == "node":
+		draw_node(tags_description, Path(options.output_file))
+	elif options.type == "way":
+		draw_way(tags_description, Path(options.output_file))
+	elif options.type == "area":
+		draw_area(tags_description, Path(options.output_file))
+	else:
+		raise ValueError(f"Unknown element type `{options.type}`, please choose from `node`, `way`, and `area`.")

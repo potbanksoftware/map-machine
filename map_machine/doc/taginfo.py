@@ -3,79 +3,75 @@ Creating Taginfo project file.
 
 See https://wiki.openstreetmap.org/wiki/Taginfo/Projects
 """
+
+# stdlib
 import json
 import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
 
-from map_machine import (
-    __author__,
-    __email__,
-)
+# this package
+from map_machine import __author__, __email__
 from map_machine.scheme import Scheme
 from map_machine.workspace import workspace
 
+__all__ = ["TaginfoProjectFile", "write_taginfo_project_file"]
+
 
 class TaginfoProjectFile:
-    """JSON structure with OpenStreetMap tag usage."""
+	"""JSON structure with OpenStreetMap tag usage."""
 
-    def __init__(self, path: Path, scheme: Scheme) -> None:
-        self.path: Path = path
+	def __init__(self, path: Path, scheme: Scheme) -> None:
+		self.path: Path = path
 
-        self.structure: Dict[str, Any] = {
-            "data_format": 1,
-            "data_url": "https://github.com/potbanksoftware/map-machine/" + str(path),
-            "data_updated": datetime.now().strftime("%Y%m%dT%H%M%SZ"),
-            "project": {
-                "name": "Map Machine",
-                "description": 'Map Machine is a Python OpenStreetMap renderer and tile generator.',
-                "project_url": "https://github.com/potbanksoftware/map-machine",
-                "icon_url": "http://enzet.ru/map-machine/image/logo.png",
-                "contact_name": __author__,
-                "contact_email": __email__,
-            },
-            "tags": [],
-        }
-        tags: list[dict[str, Any]] = self.structure["tags"]
+		self.structure: Dict[str, Any] = {
+				"data_format": 1,
+				"data_url": "https://github.com/potbanksoftware/map-machine/" + str(path),
+				"data_updated": datetime.now().strftime("%Y%m%dT%H%M%SZ"),
+				"project": {
+						"name": "Map Machine",
+						"description": "Map Machine is a Python OpenStreetMap renderer and tile generator.",
+						"project_url": "https://github.com/potbanksoftware/map-machine",
+						"icon_url": "http://enzet.ru/map-machine/image/logo.png",
+						"contact_name": __author__,
+						"contact_email": __email__,
+						},
+				"tags": [],
+				}
+		tags: list[dict[str, Any]] = self.structure["tags"]
 
-        for matcher in scheme.node_matchers:
-            if (
-                not matcher.location_restrictions
-                and matcher.shapes
-                and len(matcher.tags) == 1
-                and not matcher.add_shapes
-            ):
-                key: str = list(matcher.tags.keys())[0]
-                value: str = matcher.tags[key]
-                ids: list[str] = [
-                    (shape if isinstance(shape, str) else shape["shape"])
-                    for shape in matcher.shapes
-                ]
-                icon_id: str = "___".join(ids)
-                if value == "*":
-                    continue
-                tag = {
-                    "key": key,
-                    "value": value,
-                    "object_types": ["node", "area"],
-                    "description": "Rendered",
-                    "icon_url": "http://enzet.ru/map-machine/"
-                    f"roentgen_icons_mapcss/{icon_id}.svg",
-                }
-                tags.append(tag)
+		for matcher in scheme.node_matchers:
+			if (
+					not matcher.location_restrictions and matcher.shapes and len(matcher.tags) == 1
+					and not matcher.add_shapes
+					):
+				key: str = list(matcher.tags.keys())[0]
+				value: str = matcher.tags[key]
+				ids: list[str] = [(shape if isinstance(shape, str) else shape["shape"])
+									for shape in matcher.shapes]
+				icon_id: str = "___".join(ids)
+				if value == '*':
+					continue
+				tag = {
+						"key": key,
+						"value": value,
+						"object_types": ["node", "area"],
+						"description": "Rendered",
+						"icon_url": "http://enzet.ru/map-machine/"
+									f"roentgen_icons_mapcss/{icon_id}.svg",
+						}
+				tags.append(tag)
 
-    def write(self) -> None:
-        """Write Taginfo JSON file."""
-        with self.path.open("w+", encoding="utf-8") as output_file:
-            json.dump(self.structure, output_file, indent=4, sort_keys=True)
+	def write(self) -> None:
+		"""Write Taginfo JSON file."""
+		with self.path.open("w+", encoding="utf-8") as output_file:
+			json.dump(self.structure, output_file, indent=4, sort_keys=True)
 
 
 def write_taginfo_project_file(scheme: Scheme) -> None:
-    """Write Taginfo JSON file."""
-    out_file: Path = workspace.get_taginfo_file_path()
-    logging.info(f"Write Map Machine project file for Taginfo to {out_file}...")
-    taginfo_project_file: TaginfoProjectFile = TaginfoProjectFile(
-        out_file, scheme
-    )
-    taginfo_project_file.write()
+	"""Write Taginfo JSON file."""
+	out_file: Path = workspace.get_taginfo_file_path()
+	logging.info(f"Write Map Machine project file for Taginfo to {out_file}...")
+	taginfo_project_file: TaginfoProjectFile = TaginfoProjectFile(out_file, scheme)
+	taginfo_project_file.write()

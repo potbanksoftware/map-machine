@@ -1,51 +1,53 @@
-"""Test zoom level specification parsing."""
+"""
+Test zoom level specification parsing.
+"""
+
+# 3rd party
 import pytest
-from map_machine.slippy.tile import (
-    ScaleConfigurationException,
-    parse_zoom_level,
-)
+
+# this package
+from map_machine.slippy.tile import ScaleConfigurationException, parse_zoom_level
 
 __author__ = "Sergey Vartanov"
 __email__ = "me@enzet.ru"
 
 
 def test_zoom_level_1() -> None:
-    """Test one zoom level."""
-    assert parse_zoom_level("18") == [18]
+	"""Test one zoom level."""
+	assert parse_zoom_level("18") == [18]
 
 
 def test_zoom_level_list() -> None:
-    """Test list of zoom levels."""
-    assert parse_zoom_level("17,18") == [17, 18]
-    assert parse_zoom_level("16,17,18") == [16, 17, 18]
+	"""Test list of zoom levels."""
+	assert parse_zoom_level("17,18") == [17, 18]
+	assert parse_zoom_level("16,17,18") == [16, 17, 18]
 
 
 def test_zoom_level_range() -> None:
-    """Test range of zoom levels."""
-    assert parse_zoom_level("16-18") == [16, 17, 18]
-    assert parse_zoom_level("18-18") == [18]
+	"""Test range of zoom levels."""
+	assert parse_zoom_level("16-18") == [16, 17, 18]
+	assert parse_zoom_level("18-18") == [18]
 
 
 def test_zoom_level_mixed() -> None:
-    """Test zoom level specification with list of numbers and ranges."""
-    assert parse_zoom_level("15,16-18") == [15, 16, 17, 18]
-    assert parse_zoom_level("15,16-18,20") == [15, 16, 17, 18, 20]
+	"""Test zoom level specification with list of numbers and ranges."""
+	assert parse_zoom_level("15,16-18") == [15, 16, 17, 18]
+	assert parse_zoom_level("15,16-18,20") == [15, 16, 17, 18, 20]
 
 
 def test_zoom_level_too_big() -> None:
-    """Test too big zoom level."""
-    with pytest.raises(ScaleConfigurationException):
-        parse_zoom_level("21")
+	"""Test too big zoom level."""
+	with pytest.raises(ScaleConfigurationException):
+		parse_zoom_level("21")
 
 
 def test_zoom_level_negative() -> None:
-    """Test negative zoom level."""
-    with pytest.raises(ValueError):
-        parse_zoom_level("-1")
+	"""Test negative zoom level."""
+	with pytest.raises(ValueError):
+		parse_zoom_level("-1")
 
 
 def test_zoom_level_wrong() -> None:
-    """Test too big zoom level."""
-    with pytest.raises(ValueError):
-        parse_zoom_level(",")
-
+	"""Test too big zoom level."""
+	with pytest.raises(ValueError):
+		parse_zoom_level(',')

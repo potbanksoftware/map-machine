@@ -1,15 +1,18 @@
-"""Test Taginfo project generation."""
+"""
+Test Taginfo project generation.
+"""
+
+# stdlib
 from pathlib import Path
 
+# this package
 from map_machine.doc.taginfo import TaginfoProjectFile
 from tests import SCHEME
 
 
 def test_taginfo() -> None:
-    """Test Taginfo project generation."""
-    output_file_path: Path = Path("temp") / "taginfo.json"
+	"""Test Taginfo project generation."""
+	output_file_path: Path = Path("temp") / "taginfo.json"
 
-    project_file: TaginfoProjectFile = TaginfoProjectFile(
-        output_file_path, SCHEME
-    )
-    assert project_file.structure["project"]["name"] == "Map Machine"
+	project_file: TaginfoProjectFile = TaginfoProjectFile(output_file_path, SCHEME)
+	assert project_file.structure["project"]["name"] == "Map Machine"

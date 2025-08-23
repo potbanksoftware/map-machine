@@ -65,3 +65,8 @@ reformat = true
 [tool.snippet-fmt.languages.ini]
 
 [tool.snippet-fmt.languages.json]
+
+[tool.dep_checker.name_mapping]
+pillow = "PIL"
+pyyaml = "yaml"
+pycairo = "cairo"

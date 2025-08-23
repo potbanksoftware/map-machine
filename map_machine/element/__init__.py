@@ -1,1 +1,3 @@
-"""Drawing of separate map elements."""
+"""
+Drawing of separate map elements.
+"""

@@ -1,1 +1,3 @@
-"""Icons and points."""
+"""
+Icons and points.
+"""
