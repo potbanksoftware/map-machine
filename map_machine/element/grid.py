@@ -28,6 +28,7 @@
 
 # stdlib
 import logging
+import tempfile
 from pathlib import Path
 
 # 3rd party
@@ -47,7 +48,7 @@ from map_machine.workspace import Workspace
 
 __all__ = ["Grid"]
 
-workspace: Workspace = Workspace(Path("temp"))
+workspace: Workspace = Workspace(Path(tempfile.mkdtemp("map-machine")))
 
 SCHEME: Scheme = Scheme.from_file(workspace.DEFAULT_SCHEME_PATH)
 SHAPE_EXTRACTOR: ShapeExtractor = ShapeExtractor(workspace.ICONS_PATH, workspace.ICONS_CONFIG_PATH)

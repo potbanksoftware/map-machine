@@ -27,7 +27,7 @@ Direction tag support.
 #
 
 # stdlib
-from typing import Iterable, Iterator, Optional, Sequence, cast
+from typing import TYPE_CHECKING, Iterable, Iterator, Optional, Sequence, cast
 
 # 3rd party
 import numpy as np
@@ -40,7 +40,10 @@ from svgwrite.path import Path  # type: ignore[import-untyped]
 # this package
 from map_machine.drawing import PathCommands
 from map_machine.osm.osm_reader import Tagged
-from map_machine.scheme import Scheme
+
+if TYPE_CHECKING:
+	# this package
+	from map_machine.scheme import Scheme
 
 __all__ = ["DirectionSector", "DirectionSet", "Sector", "parse_vector", "rotation_matrix"]
 
@@ -200,7 +203,7 @@ class DirectionSector(Tagged):
 		super().__init__(tags)
 		self.point: np.ndarray = point
 
-	def draw(self, svg: Drawing, scheme: Scheme) -> None:
+	def draw(self, svg: Drawing, scheme: "Scheme") -> None:
 		"""Draw gradient sector."""
 		angle: Optional[float] = None
 		is_revert_gradient: bool = False

@@ -31,6 +31,7 @@ See https://wiki.openstreetmap.org/wiki/Tiles
 # stdlib
 import argparse
 import logging
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -493,4 +494,5 @@ def generate_tiles(options: argparse.Namespace) -> None:
 			tiles.draw(directory, Path(options.cache), configuration, osm_data)
 
 	else:
-		raise ValueError("Specify either --coordinates, --boundary-box, --tile, or --input.")
+		logging.critical("Specify either --coordinates, --boundary-box, --tile, or --input.")
+		sys.exit(1)

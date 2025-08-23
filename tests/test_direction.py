@@ -4,6 +4,7 @@ Test direction processing.
 
 # 3rd party
 import numpy as np
+import pytest
 
 # this package
 from map_machine.feature.direction import DirectionSet, Sector, parse_vector
@@ -29,8 +30,12 @@ def test_compass_points_3() -> None:
 
 
 def test_invalid() -> None:
-	"""Test invalid direction representation string."""
-	assert not parse_vector('O')
+	"""
+	Test invalid direction representation string.
+	"""
+
+	with pytest.raises(match="Unable to parse vector"):
+		parse_vector('O')
 
 
 def test_degree() -> None:

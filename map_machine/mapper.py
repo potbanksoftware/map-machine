@@ -29,6 +29,7 @@ Simple OpenStreetMap renderer.
 # stdlib
 import argparse
 import logging
+import sys
 from pathlib import Path
 from typing import Iterator, Optional
 
@@ -333,7 +334,8 @@ def render_map(arguments: argparse.Namespace) -> None:
 		get_osm(boundary_box, cache_file_path)
 		input_file_names = [cache_file_path]
 	else:
-		raise ValueError("Specify either --input, or --boundary-box, or --coordinates.")
+		logging.critical("Specify either --input, or --boundary-box, or --coordinates.")
+		sys.exit(1)
 
 	# Get OpenStreetMap data.
 

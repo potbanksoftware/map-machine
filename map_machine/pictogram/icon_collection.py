@@ -208,6 +208,7 @@ class IconCollection:
 
 		with file_name.open('w', encoding="utf-8") as output_file:
 			svg.write(output_file)
+			output_file.write('\n')
 
 	def __len__(self) -> int:
 		return len(self.icons)

@@ -1,3 +1,6 @@
+# 3rd party
+import pytest
+
 # this package
 from map_machine.geometry.boundary_box import BoundaryBox
 
@@ -27,14 +30,20 @@ def test_boundary_box_parsing() -> None:
 	assert BoundaryBox.from_text("-0.1,-0.1,0.1,0.1") == BoundaryBox(-0.1, -0.1, 0.1, 0.1)
 
 	# Negative horizontal boundary.
-	assert BoundaryBox.from_text("0.1,-0.1,-0.1,0.1") is None
+	with pytest.raises(match="Negative horizontal boundary."):
+		BoundaryBox.from_text("0.1,-0.1,-0.1,0.1")
 
 	# Negative vertical boundary.
-	assert BoundaryBox.from_text("-0.1,0.1,0.1,-0.1") is None
+	with pytest.raises(match="Negative vertical boundary."):
+		BoundaryBox.from_text("-0.1,0.1,0.1,-0.1")
 
 	# Wrong format.
-	assert BoundaryBox.from_text("wrong") is None
-	assert BoundaryBox.from_text("-O.1,-0.1,0.1,0.1") is None
+	with pytest.raises(match="Invalid boundary box."):
+		BoundaryBox.from_text("wrong")
+
+	with pytest.raises(match="Invalid boundary box."):
+		BoundaryBox.from_text("-O.1,-0.1,0.1,0.1")
 
 	# Too big boundary box.
-	assert BoundaryBox.from_text("-20,-20,20,20") is None
+	with pytest.raises(match="Boundary box is too big."):
+		BoundaryBox.from_text("-20,-20,20,20")

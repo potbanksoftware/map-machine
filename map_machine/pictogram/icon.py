@@ -292,13 +292,11 @@ class ShapeExtractor:
 	def __init__(self, svg_file_name: Path, configuration_file_name: Path) -> None:
 
 		self.shapes: dict[str, Shape] = {}
-
 		self.configuration: dict[str, Any] = {}
-		parse_configuration(
-				json.load(configuration_file_name.open(encoding="utf-8")),
-				self.configuration,
-				"root",
-				)
+
+		with configuration_file_name.open(encoding="utf-8") as fp:
+			parse_configuration(json.load(fp), self.configuration, "root")
+
 		root: Element = ElementTree.parse(svg_file_name).getroot()
 		self.parse(root)
 
