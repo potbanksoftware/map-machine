@@ -15,6 +15,7 @@ on_pypi: false
 use_whey: true
 enable_docs: false
 mypy_version: 1.17.1
+pre_commit_exclude: "^map_machine/scheme/default.yml$"
 
 python_versions:
   3.9:
