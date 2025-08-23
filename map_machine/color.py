@@ -1,7 +1,7 @@
 """Color utility."""
 from typing import Any
 
-from colour import Color
+from colour import Color  # type: ignore[import-untyped]
 
 from map_machine.util import MinMax
 

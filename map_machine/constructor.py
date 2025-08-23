@@ -6,7 +6,7 @@ from hashlib import sha256
 from typing import Any, Iterator, Optional, Union
 
 import numpy as np
-from colour import Color
+from colour import Color  # type: ignore[import-untyped]
 
 from map_machine.color import get_gradient_color
 from map_machine.feature.building import Building, BUILDING_SCALE
@@ -99,7 +99,7 @@ def glue(ways: list[OSMWay]) -> list[list[OSMNode]]:
     :param ways: ways to glue
     """
     result: list[list[OSMNode]] = []
-    to_process: set[tuple[OSMNode]] = set()
+    to_process: set[tuple[OSMNode, ...]] = set()
 
     for way in ways:
         if way.is_cycle():
@@ -110,7 +110,7 @@ def glue(ways: list[OSMWay]) -> list[list[OSMNode]]:
     while to_process:
         nodes: list[OSMNode] = list(to_process.pop())
         glued: Optional[list[OSMNode]] = None
-        other_nodes: Optional[tuple[OSMNode]] = None
+        other_nodes: tuple[OSMNode, ...]
 
         for other_nodes in to_process:
             glued = try_to_glue(nodes, list(other_nodes))
@@ -229,7 +229,6 @@ class Constructor:
 
         center_point, _ = line_center(outers[0], self.flinger)
         if self.configuration.is_wireframe():
-            # Dead code to make insensitive static analysis happy.
             color: Color = self.scheme.get_default_color()
 
             if self.configuration.drawing_mode == DrawingMode.AUTHOR:
@@ -243,11 +242,7 @@ class Constructor:
             elif self.configuration.drawing_mode == DrawingMode.BLACK:
                 color = Color("#BBBBBB")
             elif self.configuration.drawing_mode != DrawingMode.NORMAL:
-                logging.fatal(
-                    f"Drawing mode {self.configuration.drawing_mode} is not "
-                    f"supported."
-                )
-                sys.exit(1)
+                raise ValueError(f"Drawing mode {self.configuration.drawing_mode} is not supported.")
             self.draw_special_mode(line, inners, outers, color)
             return
 
@@ -263,7 +258,7 @@ class Constructor:
                 Building(line.tags, inners, outers, self.flinger, self.scheme)
             )
 
-        road_matcher: RoadMatcher = self.scheme.get_road(line.tags)
+        road_matcher: Optional[RoadMatcher] = self.scheme.get_road(line.tags)
         if road_matcher:
             road: Road = Road(
                 line.tags, outers[0], road_matcher, self.flinger, self.scheme
@@ -395,7 +390,7 @@ class Constructor:
                 continue
             inner_ways: list[OSMWay] = []
             outer_ways: list[OSMWay] = []
-            for member in relation.members:
+            for member in relation.members or ():
                 if member.type_ == "way":
                     if member.role == "inner":
                         if member.ref in self.osm_data.ways:
@@ -416,7 +411,7 @@ class Constructor:
 
         # Sort node vertically (using latitude values) to draw them from top to
         # bottom.
-        sorted_node_ids: Iterator[int] = sorted(
+        sorted_node_ids: list[int] = sorted(
             self.osm_data.nodes.keys(),
             key=lambda x: -self.osm_data.nodes[x].coordinates[0],
         )
@@ -447,13 +442,13 @@ class Constructor:
             # Dead code to make insensitive static analysis happy.
             color: Color = self.scheme.get_default_color()
 
-            if self.configuration.drawing_mode == DrawingMode.AUTHOR:
+            if self.configuration.drawing_mode == DrawingMode.AUTHOR and node.user is not None:
                 color = get_user_color(node.user, self.configuration.seed)
             if self.configuration.drawing_mode == DrawingMode.TIME:
                 color = get_time_color(node.timestamp, self.osm_data.time)
 
             dot: Shape = self.extractor.get_shape(DEFAULT_SMALL_SHAPE_ID)
-            icon_set: IconSet = IconSet(
+            icon_set = IconSet(
                 Icon([ShapeSpecification(dot, color)]),
                 [],
                 Icon([ShapeSpecification(dot, color)]),
@@ -475,8 +470,7 @@ class Constructor:
             DrawingMode.WHITE,
             DrawingMode.BLACK,
         ):
-            # Dead code to make insensitive static analysis happy.
-            color: Color = self.scheme.get_default_color()
+            color = self.scheme.get_default_color()
 
             if self.configuration.drawing_mode == DrawingMode.WHITE:
                 color = Color("#CCCCCC")
@@ -486,7 +480,7 @@ class Constructor:
                 self.extractor, tags, processed
             )
             icon_set.main_icon.recolor(color)
-            point: Point = Point(
+            point = Point(
                 icon_set,
                 [],
                 tags,
@@ -520,7 +514,7 @@ class Constructor:
 
         if "direction" in node.tags or "camera:direction" in node.tags:
             self.direction_sectors.append(DirectionSector(tags, flung))
-        point: Point = Point(
+        point = Point(
             icon_set,
             labels,
             tags,

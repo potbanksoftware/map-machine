@@ -5,14 +5,12 @@ See https://wiki.openstreetmap.org/wiki/Tiles
 """
 import argparse
 import logging
-import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
-import cairosvg
+import cairosvg  # type: ignore[import-untyped]
 import numpy as np
-import svgwrite
+import svgwrite   # type: ignore[import-untyped]
 from PIL import Image
 
 from map_machine.constructor import Constructor
@@ -325,7 +323,7 @@ class Tiles:
         input_path: Path = self.get_file_path(cache_path).with_suffix(".png")
 
         with input_path.open("rb") as input_file:
-            image: Image = Image.open(input_file)
+            image: Image.Image = Image.open(input_file)
 
             for tile in self.tiles:
                 x: int = tile.x - self.tile_1.x
@@ -336,7 +334,7 @@ class Tiles:
                     (x + 1) * TILE_WIDTH,
                     (y + 1) * TILE_HEIGHT,
                 )
-                cropped: Image = image.crop(area)
+                cropped: Image.Image = image.crop(area)
                 cropped.crop((0, 0, TILE_WIDTH, TILE_HEIGHT)).save(
                     tile.get_file_name(directory).with_suffix(".png")
                 )
@@ -479,11 +477,10 @@ def generate_tiles(options: argparse.Namespace) -> None:
         osm_data.parse_osm_file(Path(options.input_file_name))
 
         if osm_data.view_box is None:
-            logging.fatal(
+            raise ValueError(
                 "Failed to parse boundary box input file "
                 f"{options.input_file_name}."
             )
-            sys.exit(1)
 
         boundary_box: BoundaryBox = osm_data.view_box
 
@@ -502,7 +499,7 @@ def generate_tiles(options: argparse.Namespace) -> None:
             np.array(coordinates), min_zoom_level
         )
         try:
-            osm_data: OSMData = min_tile.load_osm_data(Path(options.cache))
+            osm_data = min_tile.load_osm_data(Path(options.cache))
         except NetworkError as error:
             raise NetworkError(f"Map is not loaded. {error.message}")
 
@@ -510,48 +507,43 @@ def generate_tiles(options: argparse.Namespace) -> None:
             tile: Tile = Tile.from_coordinates(
                 np.array(coordinates), zoom_level
             )
-            try:
-                configuration: MapConfiguration = MapConfiguration.from_options(
-                    scheme, options, zoom_level
-                )
-                tile.draw_with_osm_data(osm_data, directory, configuration)
-            except NetworkError as error:
-                logging.fatal(error.message)
+
+            configuration = MapConfiguration.from_options(
+                scheme, options, zoom_level
+            )
+            tile.draw_with_osm_data(osm_data, directory, configuration)
+
 
     elif options.tile:
         zoom_level, x, y = map(int, options.tile.split("/"))
-        tile: Tile = Tile(x, y, zoom_level)
-        configuration: MapConfiguration = MapConfiguration.from_options(
+        tile = Tile(x, y, zoom_level)
+        configuration = MapConfiguration.from_options(
             scheme, options, zoom_level
         )
         tile.draw(directory, Path(options.cache), configuration)
 
     elif options.boundary_box:
-        boundary_box: Optional[BoundaryBox] = BoundaryBox.from_text(
+        boundary_box = BoundaryBox.from_text(
             options.boundary_box
         )
         if boundary_box is None:
-            logging.fatal("Failed to parse boundary box.")
-            sys.exit(1)
+            raise ValueError("Failed to parse boundary box.")
 
         min_tiles: Tiles = Tiles.from_boundary_box(boundary_box, min_zoom_level)
         try:
-            osm_data: OSMData = min_tiles.load_osm_data(Path(options.cache))
+            osm_data = min_tiles.load_osm_data(Path(options.cache))
         except NetworkError as error:
             raise NetworkError(f"Map is not loaded. {error.message}")
 
         for zoom_level in zoom_levels:
             if EXTEND_TO_BIGGER_TILE:
-                tiles: Tiles = min_tiles.subdivide(zoom_level)
+                tiles = min_tiles.subdivide(zoom_level)
             else:
-                tiles: Tiles = Tiles.from_boundary_box(boundary_box, zoom_level)
-            configuration: MapConfiguration = MapConfiguration.from_options(
+                tiles = Tiles.from_boundary_box(boundary_box, zoom_level)
+            configuration = MapConfiguration.from_options(
                 scheme, options, zoom_level
             )
             tiles.draw(directory, Path(options.cache), configuration, osm_data)
 
     else:
-        logging.fatal(
-            "Specify either --coordinates, --boundary-box, --tile, or --input."
-        )
-        sys.exit(1)
+        raise ValueError("Specify either --coordinates, --boundary-box, --tile, or --input.")

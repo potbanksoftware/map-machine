@@ -7,7 +7,7 @@ expected figures in the expected order.
 import numpy as np
 
 from map_machine.constructor import Constructor
-from map_machine.figure import Figure
+from map_machine.figure import StyledFigure
 from map_machine.geometry.boundary_box import BoundaryBox
 from map_machine.geometry.flinger import MercatorFlinger
 from map_machine.map_configuration import MapConfiguration
@@ -53,7 +53,7 @@ def test_river_and_wood() -> None:
     create_way(osm_data, {"natural": "wood"}, 1)
     create_way(osm_data, {"waterway": "river"}, 2)
 
-    figures: list[Figure] = get_constructor(osm_data).get_sorted_figures()
+    figures: list[StyledFigure] = get_constructor(osm_data).get_sorted_figures()
 
     assert len(figures) == 2
     assert figures[0].tags["natural"] == "wood"

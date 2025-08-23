@@ -42,7 +42,7 @@ class Workspace:
         self._mapcss_path: Path = output_path / "map_machine_mapcss"
         self._tile_path: Path = output_path / "tiles"
 
-    def find_scheme_path(self, identifier: str) -> Optional[Path]:
+    def find_scheme_path(self, identifier: str) -> Path:
         """
         Find map scheme file by its identifier.
 
@@ -67,7 +67,7 @@ class Workspace:
         if path.is_file():
             return path
 
-        return None
+        raise FileNotFoundError(path.as_posix())
 
     def get_icons_by_id_path(self) -> Path:
         """Directory for the icon files named by identifiers."""

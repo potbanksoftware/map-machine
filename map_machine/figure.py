@@ -84,7 +84,7 @@ class StyledFigure(Figure):
             path += f"{commands} "
 
         for inner_nodes in self.inners:
-            commands: str = get_path(
+            commands = get_path(
                 inner_nodes, offset, flinger, self.line_style.parallel_offset
             )
             path += f"{commands} "

@@ -9,12 +9,12 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 
 import numpy as np
-import svgwrite
-from colour import Color
+import svgwrite   # type: ignore[import-untyped]
+from colour import Color  # type: ignore[import-untyped]
 from svgwrite import Drawing
-from svgwrite.base import BaseElement
-from svgwrite.container import Group
-from svgwrite.path import Path as SVGPath
+from svgwrite.base import BaseElement  # type: ignore[import-untyped]
+from svgwrite.container import Group  # type: ignore[import-untyped]
+from svgwrite.path import Path as SVGPath  # type: ignore[import-untyped]
 
 from map_machine.color import is_bright
 
@@ -106,7 +106,7 @@ class Shape:
 
         if "emoji" in structure:
             emojis = structure["emoji"]
-            shape.emojis = [emojis] if isinstance(emojis, str) else emojis
+            shape.emojis = {emojis} if isinstance(emojis, str) else set(emojis)
 
         shape.is_part = structure.get("is_part", False)
         shape.group = structure.get("group", "")
@@ -383,7 +383,7 @@ class ShapeSpecification:
         self,
         svg: BaseElement,
         point: np.ndarray,
-        tags: dict[str, Any] = None,
+        tags: Optional[dict[str, Any]] = None,
         outline: bool = False,
         outline_opacity: float = 1.0,
         scale: float = 1.0,
@@ -405,7 +405,7 @@ class ShapeSpecification:
         if self.flip_horizontally:
             scale_vector = np.array((-scale, scale))
 
-        point: np.ndarray = np.array(list(map(int, point)))
+        point = np.array(list(map(int, point)))
         path: SVGPath = self.shape.get_path(
             point, self.offset * scale, scale_vector
         )
@@ -429,14 +429,20 @@ class ShapeSpecification:
 
         svg.add(path)
 
-    def __eq__(self, other: "ShapeSpecification") -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ShapeSpecification):
+            return False
+
         return (
             self.shape == other.shape
             and self.color == other.color
             and np.allclose(self.offset, other.offset)
         )
 
-    def __lt__(self, other: "ShapeSpecification") -> bool:
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, ShapeSpecification):
+            return False
+
         return self.shape.id_ < other.shape.id_
 
 
@@ -496,7 +502,7 @@ class Icon:
         self,
         svg: svgwrite.Drawing,
         point: np.ndarray,
-        tags: dict[str, Any] = None,
+        tags: Optional[dict[str, Any]] = None,
         outline: bool = False,
         scale: float = 1.0,
     ) -> None:
@@ -581,12 +587,18 @@ class Icon:
         """Add shape specifications to the icon."""
         self.shape_specifications += specifications
 
-    def __eq__(self, other: "Icon") -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Icon):
+            return False
+
         return sorted(self.shape_specifications) == sorted(
             other.shape_specifications
         )
 
-    def __lt__(self, other: "Icon") -> bool:
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, Icon):
+            return False
+
         return "".join(
             [x.shape.get_full_id() for x in self.shape_specifications]
         ) < "".join([x.shape.get_full_id() for x in other.shape_specifications])

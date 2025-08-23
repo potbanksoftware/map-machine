@@ -76,8 +76,8 @@ def draw_overlapped_ways(types: list[dict[str, str]], path: Path) -> None:
         grid.add_text(", ".join(f"{k}={tags[k]}" for k in tags), 0, index + 1)
 
     for index, tags in enumerate(types):
-        node_1: OSMNode = grid.add_node({}, index + 9, 0)
-        node_2: OSMNode = grid.add_node({}, index + 9, len(types) + 1)
+        node_1 = grid.add_node({}, index + 9, 0)
+        node_2 = grid.add_node({}, index + 9, len(types) + 1)
         grid.add_way(tags, [node_1, node_2])
 
     grid.draw(path)

@@ -4,12 +4,12 @@ import logging
 from pathlib import Path
 from typing import Optional, TextIO
 
-from colour import Color
+from colour import Color  # type: ignore[import-untyped]
 
 from map_machine.osm.osm_reader import STAGES_OF_DECAY
 from map_machine.pictogram.icon import ShapeExtractor
 from map_machine.pictogram.icon_collection import IconCollection
-from map_machine.scheme import Matcher, Scheme
+from map_machine.scheme import Matcher, NodeMatcher, Scheme, WayMatcher
 from map_machine.workspace import workspace
 
 __author__ = "Sergey Vartanov"
@@ -79,8 +79,8 @@ class MapCSSWriter:
         self.add_icons_for_lifecycle: bool = add_icons_for_lifecycle
         self.icon_directory_name: str = icon_directory_name
 
-        self.point_matchers: list[Matcher] = scheme.node_matchers
-        self.line_matchers: list[Matcher] = scheme.way_matchers
+        self.point_matchers: list[NodeMatcher] = scheme.node_matchers
+        self.line_matchers: list[WayMatcher] = scheme.way_matchers
 
     def add_selector(
         self,

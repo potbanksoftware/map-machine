@@ -5,8 +5,8 @@ If radius of trunk or crown are specified they are displayed with simple
 circles.
 """
 import numpy as np
-from colour import Color
-from svgwrite import Drawing
+from colour import Color  # type: ignore[import-untyped]
+from svgwrite import Drawing  # type: ignore[import-untyped]
 
 from map_machine.geometry.flinger import Flinger
 from map_machine.osm.osm_reader import Tagged
@@ -37,7 +37,7 @@ class Tree(Tagged):
         svg.add(svg.circle(self.point, radius * scale, fill=color, opacity=0.3))
 
         if (circumference := self.get_float("circumference")) is not None:
-            radius: float = circumference / 2.0 / np.pi
+            radius = circumference / 2.0 / np.pi
             circle = svg.circle(
                 self.point, radius * scale, fill=scheme.get_color("trunk_color")
             )

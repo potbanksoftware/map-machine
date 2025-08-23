@@ -50,8 +50,4 @@ def draw_element(options: argparse.Namespace):
     elif options.type == "area":
         draw_area(tags_description, Path(options.output_file))
     else:
-        logging.fatal(
-            f"Unknown element type `{options.type}`, please choose from "
-            f"`node`, `way`, and `area`."
-        )
-        exit(1)
+        raise ValueError(f"Unknown element type `{options.type}`, please choose from `node`, `way`, and `area`.")

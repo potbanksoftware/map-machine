@@ -3,14 +3,14 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import Iterator, Optional
+from typing import Iterator, NoReturn, Optional
 
 import numpy as np
-import svgwrite
-from colour import Color
-from svgwrite.container import Group
-from svgwrite.path import Path as SVGPath
-from svgwrite.shapes import Rect
+import svgwrite   # type: ignore[import-untyped]
+from colour import Color  # type: ignore[import-untyped]
+from svgwrite.container import Group  # type: ignore[import-untyped]
+from svgwrite.path import Path as SVGPath  # type: ignore[import-untyped]
+from svgwrite.shapes import Rect  # type: ignore[import-untyped]
 
 from map_machine.constructor import Constructor
 from map_machine.drawing import draw_text
@@ -80,9 +80,9 @@ class Map:
         constructor.roads.draw(self.svg, self.flinger)
 
         for figure in top_figures:
-            path_commands: str = figure.get_path(self.flinger)
+            path_commands = figure.get_path(self.flinger)
             if path_commands:
-                path: SVGPath = SVGPath(d=path_commands)
+                path = SVGPath(d=path_commands)
                 path.update(figure.line_style.style)
                 self.svg.add(path)
 
@@ -176,7 +176,7 @@ class Map:
                 (0.0, -height * scale * BUILDING_SCALE)
             )
             for wall in sorted_walls:
-                building: Building = walls[wall]
+                building = walls[wall]
                 if building.height < height or building.min_height >= height:
                     continue
 
@@ -270,12 +270,6 @@ class Map:
                 )
 
 
-def fatal(message: str) -> None:
-    """Print error message and exit with non-zero exit code."""
-    logging.fatal(message)
-    sys.exit(1)
-
-
 def render_map(arguments: argparse.Namespace) -> None:
     """
     Map rendering entry point.
@@ -284,11 +278,11 @@ def render_map(arguments: argparse.Namespace) -> None:
     """
     scheme_path: Optional[Path] = workspace.find_scheme_path(arguments.scheme)
     if scheme_path is None:
-        fatal(f"Scheme `{arguments.scheme}` not found.")
+        raise ValueError(f"Scheme `{arguments.scheme}` not found.")
 
     scheme: Optional[Scheme] = Scheme.from_file(scheme_path)
     if scheme is None:
-        fatal(f"Failed to load scheme from `{arguments.scheme}`.")
+        raise ValueError(f"Failed to load scheme from `{arguments.scheme}`.")
 
     configuration: MapConfiguration = MapConfiguration.from_options(
         scheme, arguments, float(arguments.zoom)
@@ -305,7 +299,7 @@ def render_map(arguments: argparse.Namespace) -> None:
     if arguments.boundary_box:
         boundary_box = BoundaryBox.from_text(arguments.boundary_box)
         if not boundary_box:
-            fatal("Invalid boundary box.")
+            raise ValueError("Invalid boundary box.")
         if arguments.coordinates:
             logging.warning(
                 "Boundary box is explicitly specified. Coordinates are ignored."
@@ -321,7 +315,7 @@ def render_map(arguments: argparse.Namespace) -> None:
                 )
 
         if coordinates is None or len(coordinates) != 2:
-            fatal("Wrong coordinates format.")
+            raise ValueError("Wrong coordinates format.")
 
         if arguments.size:
             width, height = np.array(
@@ -340,25 +334,23 @@ def render_map(arguments: argparse.Namespace) -> None:
     if arguments.input_file_names:
         input_file_names = list(map(Path, arguments.input_file_names))
     elif boundary_box:
-        try:
+
             cache_file_path: Path = (
                 cache_path / f"{boundary_box.get_format()}.osm"
             )
             get_osm(boundary_box, cache_file_path)
             input_file_names = [cache_file_path]
-        except NetworkError as error:
-            logging.fatal(error.message)
-            sys.exit(1)
     else:
-        fatal("Specify either --input, or --boundary-box, or --coordinates.")
+        raise ValueError("Specify either --input, or --boundary-box, or --coordinates.")
 
     # Get OpenStreetMap data.
+
+    assert input_file_names is not None
 
     osm_data: OSMData = OSMData()
     for input_file_name in input_file_names:
         if not input_file_name.is_file():
-            logging.fatal(f"No such file: {input_file_name}.")
-            sys.exit(1)
+            raise ValueError(f"No such file: {input_file_name}.")
 
         if input_file_name.name.endswith(".json"):
             osm_data.parse_overpass(input_file_name)
@@ -369,6 +361,8 @@ def render_map(arguments: argparse.Namespace) -> None:
         boundary_box = osm_data.view_box
     if not boundary_box:
         boundary_box = osm_data.boundary_box
+
+    assert boundary_box is not None
 
     # Render the map.
 

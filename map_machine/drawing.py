@@ -1,17 +1,17 @@
 """Drawing utility."""
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Sequence, Union
 
 import cairo
 import numpy as np
-import svgwrite
+import svgwrite   # type: ignore[import-untyped]
 from cairo import Context, ImageSurface
-from colour import Color
-from svgwrite.base import BaseElement
-from svgwrite.path import Path as SVGPath
-from svgwrite.shapes import Rect
-from svgwrite.text import Text
+from colour import Color  # type: ignore[import-untyped]
+from svgwrite.base import BaseElement  # type: ignore[import-untyped]
+from svgwrite.path import Path as SVGPath  # type: ignore[import-untyped]
+from svgwrite.shapes import Rect  # type: ignore[import-untyped]
+from svgwrite.text import Text  # type: ignore[import-untyped]
 
 __author__ = "Sergey Vartanov"
 __email__ = "me@enzet.ru"
@@ -40,6 +40,9 @@ class Style:
 
     def draw_png_fill(self, context: Context) -> None:
         """Set style for context and draw fill."""
+        if not self.fill:
+            return
+
         context.set_source_rgba(
             self.fill.get_red(), self.fill.get_green(), self.fill.get_blue()
         )
@@ -47,6 +50,9 @@ class Style:
 
     def draw_png_stroke(self, context: Context) -> None:
         """Set style for context and draw stroke."""
+        if not self.stroke:
+            return
+
         context.set_source_rgba(
             self.stroke.get_red(),
             self.stroke.get_green(),
@@ -176,26 +182,30 @@ class PNGDrawing(Drawing):
     def _do_path(self, commands: PathCommands) -> None:
         """Draw path."""
         current: np.ndarray = np.array((0.0, 0.0))
-        start_point: Optional[np.ndarray] = None
+        start_point: Sequence = ()
         command: str = "M"
         is_absolute: bool = True
+
+        point_1: np.ndarray
+        point_2: np.ndarray
+        point_3: np.ndarray
 
         index: int = 0
         while index < len(commands):
             element: Union[float, str, np.ndarray] = commands[index]
 
             if isinstance(element, str):
-                is_absolute: bool = element.lower() != element
-                command: str = element.lower()
+                is_absolute = element.lower() != element
+                command = element.lower()
                 if command == "z":
                     self.context.line_to(start_point[0], start_point[1])
-                    current = start_point
-                    start_point = None
+                    current = start_point  # type: ignore[assignment]
+                    start_point = ()
 
             elif command in "ml":
                 point: np.ndarray
                 if is_absolute:
-                    point = commands[index]
+                    point = commands[index]  # type: ignore[assignment]
                 else:
                     point = current + commands[index]
                 current = point
@@ -208,13 +218,13 @@ class PNGDrawing(Drawing):
 
             elif command == "c":
                 if is_absolute:
-                    point_1: np.ndarray = commands[index]
-                    point_2: np.ndarray = commands[index + 1]
-                    point_3: np.ndarray = commands[index + 2]
+                    point_1 = commands[index]  # type: ignore[assignment]
+                    point_2 = commands[index + 1]  # type: ignore[assignment]
+                    point_3 = commands[index + 2]  # type: ignore[assignment]
                 else:
-                    point_1: np.ndarray = current + commands[index]
-                    point_2: np.ndarray = current + commands[index + 1]
-                    point_3: np.ndarray = current + commands[index + 2]
+                    point_1 = current + commands[index]
+                    point_2 = current + commands[index + 1]
+                    point_3 = current + commands[index + 2]
                 current = point_3
                 self.context.curve_to(
                     point_1[0], point_1[1],
@@ -227,7 +237,6 @@ class PNGDrawing(Drawing):
 
             elif command in "vh":
                 assert isinstance(commands[index], float)
-                point: np.ndarray
                 if is_absolute:
                     if command == "v":
                         point = np.array((0.0, commands[index]))

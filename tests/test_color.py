@@ -1,5 +1,5 @@
 """Test color functions."""
-from colour import Color
+from colour import Color  # type: ignore[import-untyped]
 
 from map_machine.color import get_gradient_color, is_bright
 from map_machine.util import MinMax

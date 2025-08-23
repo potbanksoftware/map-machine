@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import Any, Optional
 
-from colour import Color
+from colour import Color  # type: ignore[import-untyped]
 
 from map_machine.map_configuration import LabelMode
 from map_machine.osm.osm_reader import Tags

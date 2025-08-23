@@ -2,15 +2,15 @@
 import logging
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Any, Optional, Union
+from typing import Any, MutableSequence, Optional, Sequence, Union
 
 import numpy as np
-import svgwrite
-from colour import Color
+import svgwrite   # type: ignore[import-untyped]
+from colour import Color  # type: ignore[import-untyped]
 from svgwrite import Drawing
-from svgwrite.filters import Filter
-from svgwrite.path import Path
-from svgwrite.shapes import Circle
+from svgwrite.filters import Filter  # type: ignore[import-untyped]
+from svgwrite.path import Path  # type: ignore[import-untyped]
+from svgwrite.shapes import Circle  # type: ignore[import-untyped]
 
 from map_machine.drawing import PathCommands
 from map_machine.geometry.flinger import Flinger
@@ -157,7 +157,7 @@ class RoadPart:
             stroke="#000000",
         )
         drawing.add(line)
-        line: Path = drawing.path(
+        line = drawing.path(
             (
                 "M", self.point_1 + self.right_vector,
                 "L", self.point_2 + self.right_vector,
@@ -311,8 +311,8 @@ class Intersection:
             part_2.update()
 
         for index, part_1 in enumerate(self.parts):
-            next_index: int = 0 if index == len(self.parts) - 1 else index + 1
-            part_2: RoadPart = self.parts[next_index]
+            next_index = 0 if index == len(self.parts) - 1 else index + 1
+            part_2 = self.parts[next_index]
             part_1.update()
             part_2.update()
 
@@ -330,22 +330,23 @@ class Intersection:
 
     def draw(self, drawing: svgwrite.Drawing, is_debug: bool = False) -> None:
         """Draw all road parts and intersection."""
-        inner_commands = ["M"]
-        for part in self.parts:
-            inner_commands += [part.left_connection, "L"]
-        inner_commands[-1] = "Z"
-
-        outer_commands = ["M"]
-        for part in self.parts:
-            outer_commands += [part.left_connection, "L"]
-            outer_commands += [part.left_outer, "L"]
-            outer_commands += [part.right_outer, "L"]
-        outer_commands[-1] = "Z"
-
-        # for part in self.parts:
-        #     part.draw_normal(drawing)
-
         if is_debug:
+            inner_commands: MutableSequence[Union[str, np.ndarray]] = ["M"]
+            for part in self.parts:
+                assert part.left_connection is not None
+                inner_commands += [part.left_connection, "L"]
+            inner_commands[-1] = "Z"
+
+            outer_commands: MutableSequence[Union[str, np.ndarray]] = ["M"]
+            for part in self.parts:
+                assert part.left_connection is not None
+                assert part.left_outer is not None
+                assert part.right_outer is not None
+                outer_commands += [part.left_connection, "L"]
+                outer_commands += [part.left_outer, "L"]
+                outer_commands += [part.right_outer, "L"]
+            outer_commands[-1] = "Z"
+
             drawing.add(
                 drawing.path(outer_commands, fill="#0000FF", opacity=0.2)
             )
@@ -382,7 +383,7 @@ class Road(Tagged):
         self.line: Polyline = Polyline(
             [flinger.fling(node.coordinates) for node in self.nodes]
         )
-        self.width: Optional[float] = matcher.default_width
+        self.width: float = matcher.default_width
         self.lanes: list[Lane] = []
 
         self.scale: float = flinger.get_scale(self.nodes[0].coordinates)
@@ -437,12 +438,12 @@ class Road(Tagged):
         self.is_transition: bool = False
 
         if "placement" in tags:
-            value: str = tags["placement"]
+            value = tags["placement"]
             if value == "transition":
                 self.is_transition = True
             elif ":" in value and len(parts := value.split(":")) == 2:
                 place, lane_string = parts
-                lane_number: int = int(lane_string) - 1
+                lane_number = int(lane_string) - 1
                 self.placement_offset = -self.width * self.scale / 2.0
                 if lane_number > 0:
                     self.placement_offset += sum(
@@ -772,7 +773,7 @@ class ComplexConnector(Connector):
                 filter=filter_.get_funciri(),
             )
         else:
-            path: Path = svg.path(d=["M"] + self.curve_1 + ["M"] + self.curve_2)
+            path = svg.path(d=["M"] + self.curve_1 + ["M"] + self.curve_2)
         path.update(self.road_1.get_style(True, True))
         svg.add(path)
 
@@ -852,7 +853,6 @@ class Roads:
                     layered_connectors[road.layer].append(connector)
 
         for connected in self.nodes.values():
-            connector: Connector
 
             if len(connected) <= 1:
                 continue
@@ -882,7 +882,7 @@ class Roads:
             roads: list[Road] = sorted(
                 layered_roads[layer], key=lambda x: x.matcher.priority
             )
-            connectors: list[Connector] = layered_connectors.get(layer)
+            connectors: Optional[list[Connector]] = layered_connectors.get(layer)
 
             # Draw borders.
 

@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, cast
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 
@@ -88,7 +88,7 @@ class Tagged:
 
         value: str = self.tags[key]
 
-        float_value: float = parse_float(value)
+        float_value: Optional[float] = parse_float(value)
         if float_value is not None:
             return float_value
 
@@ -97,9 +97,9 @@ class Tagged:
             (KILOMETERS_PATTERN, 1000.0),
             (MILES_PATTERN, 1609.344),
         ]:
-            matcher: re.Match = pattern.match(value)
+            matcher: Optional[re.Match] = pattern.match(value)
             if matcher:
-                float_value: float = parse_float(matcher.group("value"))
+                float_value = parse_float(matcher.group("value"))
                 if float_value is not None:
                     return float_value * ratio
 
@@ -203,7 +203,7 @@ class OSMWay(Tagged):
     """
 
     id_: int
-    nodes: Optional[list[OSMNode]] = field(default_factory=list)
+    nodes: list[OSMNode] = field(default_factory=list)
     visible: Optional[str] = None
     changeset: Optional[str] = None
     timestamp: Optional[datetime] = None
@@ -497,4 +497,4 @@ class OSMData:
 
     def parse_object(self, element: Element) -> None:
         """Parse astronomical object properties from XML element."""
-        self.equator_length = float(element.get("equator"))
+        self.equator_length = float(cast(str, element.get("equator")))

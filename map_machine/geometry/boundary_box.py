@@ -23,7 +23,7 @@ class BoundaryBox:
     top: float  # Maximum latitude.
 
     @classmethod
-    def from_text(cls, boundary_box: str) -> Optional["BoundaryBox"]:
+    def from_text(cls, boundary_box: str) -> "BoundaryBox":
         """
         Parse boundary box string representation.
 
@@ -45,8 +45,7 @@ class BoundaryBox:
         )
 
         if not matcher:
-            logging.fatal("Invalid boundary box.")
-            return None
+            raise ValueError("Invalid boundary box.")
 
         try:
             left: float = float(matcher.group("left"))
@@ -54,21 +53,17 @@ class BoundaryBox:
             right: float = float(matcher.group("right"))
             top: float = float(matcher.group("top"))
         except ValueError:
-            logging.fatal("Invalid boundary box.")
-            return None
+            raise ValueError("Invalid boundary box.")
 
         if left >= right:
-            logging.fatal("Negative horizontal boundary.")
-            return None
+            raise ValueError("Negative horizontal boundary.")
         if bottom >= top:
-            logging.error("Negative vertical boundary.")
-            return None
+            raise ValueError("Negative vertical boundary.")
         if (
             right - left > LONGITUDE_MAX_DIFFERENCE
             or top - bottom > LATITUDE_MAX_DIFFERENCE
         ):
-            logging.error("Boundary box is too big.")
-            return None
+            raise ValueError("Boundary box is too big.")
 
         return cls(left, bottom, right, top)
 

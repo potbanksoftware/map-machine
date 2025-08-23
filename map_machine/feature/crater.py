@@ -1,7 +1,7 @@
 """Crater on the map."""
 import numpy as np
-from colour import Color
-from svgwrite import Drawing
+from colour import Color  # type: ignore[import-untyped]
+from svgwrite import Drawing  # type: ignore[import-untyped]
 
 from map_machine.geometry.flinger import Flinger
 from map_machine.osm.osm_reader import Tagged

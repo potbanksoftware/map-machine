@@ -48,5 +48,7 @@ def test_sector_parsing() -> None:
     Sector("-90", angle=0)
 
     sector: Sector = Sector("0-180")
+    assert sector.start is not None
     assert np.allclose(sector.start, [0, -1])
+    assert sector.end is not None
     assert np.allclose(sector.end, [0, 1])

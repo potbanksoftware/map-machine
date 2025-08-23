@@ -4,11 +4,11 @@ import re
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, cast
 
 import numpy as np
 import yaml
-from colour import Color
+from colour import Color  # type: ignore[import-untyped]
 
 from map_machine.feature.direction import DirectionSet
 from map_machine.osm.osm_reader import Tagged, Tags
@@ -25,7 +25,7 @@ from map_machine.pictogram.icon import (
 __author__ = "Sergey Vartanov"
 __email__ = "me@enzet.ru"
 
-IconDescription = list[Union[str, dict[str, str]]]
+IconDescription = list[dict[str, str]]
 
 DEFAULT_COLOR: Color = Color("black")
 
@@ -68,7 +68,7 @@ def is_matched_tag(
         return MatchingType.MATCHED_BY_WILDCARD, []
     if tags[matcher_tag_key] == matcher_tag_value:
         return MatchingType.MATCHED, []
-    if matcher_tag_value.startswith("^"):
+    if isinstance(matcher_tag_value, str) and matcher_tag_value.startswith("^"):
         matcher: Optional[re.Match] = re.match(
             matcher_tag_value, tags[matcher_tag_key]
         )
@@ -154,7 +154,6 @@ class Matcher(Tagged):
             return False, {}
 
         for config_tag_key in self.tags:
-            config_tag_key: str
             is_matched, matched_groups = is_matched_tag(
                 config_tag_key, self.tags[config_tag_key], tags
             )
@@ -167,7 +166,6 @@ class Matcher(Tagged):
 
         if self.exception:
             for config_tag_key in self.exception:
-                config_tag_key: str
                 is_matched, matched_groups = is_matched_tag(
                     config_tag_key, self.exception[config_tag_key], tags
                 )
@@ -197,7 +195,7 @@ class Matcher(Tagged):
 
 def get_shape_specifications(
     structure: list[Union[str, dict[str, Any]]]
-) -> list[dict]:
+) -> list[dict[str, str]]:
     """Parse shape specification from scheme."""
     shapes: list[dict] = []
     for shape_specification in structure:
@@ -303,7 +301,7 @@ class RoadMatcher(Matcher):
         """Get priority for drawing order."""
         layer: float = 0.0
         if "layer" in tags:
-            layer = float(tags.get("layer"))
+            layer = float(cast(str, tags.get("layer")))
         return 1000.0 * layer + self.priority
 
 
@@ -361,20 +359,19 @@ class Scheme:
         self.cache: dict[str, tuple[IconSet, int]] = {}
 
     @classmethod
-    def from_file(cls, file_name: Path) -> Optional["Scheme"]:
+    def from_file(cls, file_name: Path) -> "Scheme":
         """
         :param file_name: name of the scheme file with tags, colors, and tag key
             specification
         """
         with file_name.open(encoding="utf-8") as input_file:
-            try:
-                content: dict[str, Any] = yaml.load(
-                    input_file.read(), Loader=yaml.FullLoader
-                )
-            except yaml.YAMLError:
-                return None
+            content: dict[str, Any] = yaml.load(
+                input_file.read(), Loader=yaml.FullLoader
+            )
+
             if not content:
                 return cls({})
+
             return cls(content)
 
     def get_color(self, color: str) -> Color:
@@ -389,11 +386,11 @@ class Scheme:
             if isinstance(specification, str):
                 return Color(self.colors[color])
 
-            color: Color = self.get_color(specification["color"])
+            new_color = self.get_color(specification["color"])
             if "darken" in specification:
                 percent: float = float(specification["darken"])
-                color.set_luminance(color.get_luminance() * (1 - percent))
-            return color
+                new_color.set_luminance(new_color.get_luminance() * (1 - percent))
+            return new_color
 
         if color.lower() in self.colors:
             return Color(self.colors[color.lower()])
@@ -485,7 +482,7 @@ class Scheme:
         zoom_level: float = 18,
         ignore_level_matching: bool = False,
         show_overlapped: bool = False,
-    ) -> tuple[Optional[IconSet], int]:
+    ) -> tuple[IconSet, int]:
         """
         Construct icon set.
 
@@ -519,7 +516,8 @@ class Scheme:
             if not ignore_level_matching and not matcher.check_zoom_level(
                 zoom_level
             ):
-                return None, 0
+                raise ValueError
+
             matcher_tags: set[str] = set(matcher.tags.keys())
             priority = len(self.node_matchers) - index
             if not matcher.draw:
@@ -572,7 +570,7 @@ class Scheme:
             dot_spec: ShapeSpecification = ShapeSpecification(
                 extractor.get_shape(DEFAULT_SHAPE_ID), self.get_color("default")
             )
-            main_icon: Icon = Icon([dot_spec])
+            main_icon = Icon([dot_spec])
 
         if main_icon and color:
             main_icon.recolor(color)
@@ -649,18 +647,16 @@ class Scheme:
 
     def get_shape_specification(
         self,
-        structure: Union[str, dict[str, Any]],
+        structure: dict[str, Any],
         extractor: ShapeExtractor,
-        groups: dict[str, str] = None,
+        groups: Optional[dict[str, str]] = None,
         color: Optional[Color] = None,
     ) -> ShapeSpecification:
         """
-        Parse shape specification from structure, that is just shape string
-        identifier or dictionary with keys: shape (required), color (optional),
-        and offset (optional).
+        Parse shape specification from structure, a dictionary with keys: shape (required), color (optional), and offset (optional).
         """
         shape: Shape = extractor.get_shape(DEFAULT_SHAPE_ID)
-        color: Color = (
+        color = (
             color if color is not None else Color(self.colors["default"])
         )
         offset: np.ndarray = np.array((0.0, 0.0))
@@ -668,7 +664,6 @@ class Scheme:
         flip_vertically: bool = False
         use_outline: bool = True
 
-        structure: dict[str, Any]
         if "shape" in structure:
             shape_id: str = structure["shape"]
             if groups:

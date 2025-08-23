@@ -7,11 +7,10 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict
 
 from map_machine import (
     __author__,
-    __description__,
-    __doc_url__,
     __email__,
 )
 from map_machine.scheme import Scheme
@@ -24,22 +23,21 @@ class TaginfoProjectFile:
     def __init__(self, path: Path, scheme: Scheme) -> None:
         self.path: Path = path
 
-        self.structure = {
+        self.structure: Dict[str, Any] = {
             "data_format": 1,
             "data_url": "https://github.com/potbanksoftware/map-machine/" + str(path),
             "data_updated": datetime.now().strftime("%Y%m%dT%H%M%SZ"),
             "project": {
                 "name": "Map Machine",
-                "description": __description__,
+                "description": 'Map Machine is a Python OpenStreetMap renderer and tile generator.',
                 "project_url": "https://github.com/potbanksoftware/map-machine",
-                "doc_url": __doc_url__,
                 "icon_url": "http://enzet.ru/map-machine/image/logo.png",
                 "contact_name": __author__,
                 "contact_email": __email__,
             },
             "tags": [],
         }
-        tags = self.structure["tags"]
+        tags: list[dict[str, Any]] = self.structure["tags"]
 
         for matcher in scheme.node_matchers:
             if (

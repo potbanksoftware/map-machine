@@ -18,7 +18,7 @@ class ArgumentParser(argparse.ArgumentParser):
         self.arguments: list[dict[str, Any]] = []
         super().__init__(*args, **kwargs)
 
-    def add_argument(self, *args, **kwargs) -> None:
+    def add_argument(self, *args, **kwargs) -> None:  # type: ignore[override]
         """Just store argument with options."""
         super().add_argument(*args, **kwargs)
         argument: dict[str, Any] = {"arguments": args}

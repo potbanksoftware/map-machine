@@ -2,8 +2,8 @@ import logging
 from pathlib import Path
 
 import numpy as np
-from svgwrite import Drawing
-from svgwrite.text import Text
+from svgwrite import Drawing  # type: ignore[import-untyped]
+from svgwrite.text import Text  # type: ignore[import-untyped]
 
 from map_machine.constructor import Constructor
 from map_machine.geometry.flinger import Flinger, TranslateFlinger
@@ -117,7 +117,7 @@ class Grid:
         for text, i, j in self.texts:
             text_element: Text = Text(
                 text,
-                flinger.fling((i, j)) + np.array((0, 3)),
+                flinger.fling((i, j)) + np.array((0, 3)),  # type: ignore[arg-type]
                 font_family="JetBrains Mono",
                 font_size=12,
             )

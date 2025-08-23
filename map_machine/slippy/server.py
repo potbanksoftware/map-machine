@@ -5,7 +5,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from typing import Optional
 
-import cairosvg
+import cairosvg  # type: ignore[import-untyped]
 
 from map_machine.map_configuration import MapConfiguration
 from map_machine.slippy.tile import Tile
@@ -21,15 +21,6 @@ class TileServerHandler(SimpleHTTPRequestHandler):
     cache: Path = Path("cache")
     update_cache: bool = False
     options: Optional[argparse.Namespace] = None
-
-    def __init__(
-        self,
-        request: bytes,
-        client_address: tuple[str, int],
-        server: HTTPServer,
-    ) -> None:
-        # TODO: delete?
-        super().__init__(request, client_address, server)
 
     def do_GET(self) -> None:
         """Serve a GET request."""
@@ -51,7 +42,7 @@ class TileServerHandler(SimpleHTTPRequestHandler):
                     tile.draw(
                         tile_path,
                         self.cache,
-                        MapConfiguration(zoom_level=zoom_level),
+                        MapConfiguration(zoom_level=zoom_level),  # type: ignore[call-arg]
                     )
                 with svg_path.open(encoding="utf-8") as input_file:
                     cairosvg.svg2png(

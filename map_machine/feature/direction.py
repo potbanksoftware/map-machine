@@ -1,12 +1,12 @@
 """Direction tag support."""
-from typing import Iterator, Optional
+from typing import Iterable, Iterator, Optional, Sequence, cast
 
 import numpy as np
-from colour import Color
-from portolan import middle
-from svgwrite import Drawing
-from svgwrite.gradients import RadialGradient
-from svgwrite.path import Path
+from colour import Color  # type: ignore[import-untyped]
+from portolan import middle  # type: ignore[import-untyped]
+from svgwrite import Drawing  # type: ignore[import-untyped]
+from svgwrite.gradients import RadialGradient  # type: ignore[import-untyped]
+from svgwrite.path import Path  # type: ignore[import-untyped]
 
 from map_machine.drawing import PathCommands
 from map_machine.osm.osm_reader import Tagged
@@ -19,7 +19,7 @@ SMALLEST_ANGLE: float = np.pi / 15.0
 DEFAULT_ANGLE: float = np.pi / 30.0
 
 
-def parse_vector(text: str) -> Optional[np.ndarray]:
+def parse_vector(text: str) -> np.ndarray:
     """
     Parse vector from text representation.
 
@@ -35,12 +35,12 @@ def parse_vector(text: str) -> Optional[np.ndarray]:
         pass
 
     try:
-        radians: float = np.radians(middle(text)) + SHIFT
+        radians = np.radians(middle(text)) + SHIFT
         return np.array((np.cos(radians), np.sin(radians)))
     except KeyError:
         pass
 
-    return None
+    raise ValueError("Unable to parse vector")
 
 
 def rotation_matrix(angle: float) -> np.ndarray:
@@ -145,10 +145,11 @@ class DirectionSet:
         :param radius: radius of all arcs
         :return: list of "d" values
         """
-        return filter(
-            lambda x: x is not None,
-            map(lambda x: x.draw(center, radius), self.sectors),
-        )
+        for sector in self.sectors:
+            if sector is not None:
+                drawn = sector.draw(center, radius)
+                if drawn is not None:
+                    yield drawn
 
     def is_right(self) -> Optional[bool]:
         """
@@ -157,7 +158,7 @@ class DirectionSet:
         :return: true if direction is right, false if direction is left, and
             None otherwise.
         """
-        result: list[bool] = [sector.is_right() for sector in self.sectors]
+        result: Sequence[Optional[bool]] = [sector.is_right() for sector in self.sectors if sector is not None]
         if result == [True] * len(result):
             return True
         if result == [False] * len(result):
@@ -176,16 +177,16 @@ class DirectionSector(Tagged):
         """Draw gradient sector."""
         angle: Optional[float] = None
         is_revert_gradient: bool = False
-        direction: str
+        direction: Optional[str]
         direction_radius: float
         direction_color: Color
 
         if self.get_tag("man_made") == "surveillance":
             direction = self.get_tag("camera:direction")
             if "camera:angle" in self.tags:
-                angle = float(self.get_tag("camera:angle"))
+                angle = float(cast(str, self.get_tag("camera:angle")))
             if "angle" in self.tags:
-                angle = float(self.get_tag("angle"))
+                angle = float(cast(str, self.get_tag("angle")))
             direction_radius = 50.0
             direction_color = scheme.get_color("direction_camera_color")
         elif self.get_tag("traffic_sign") == "stop":
@@ -203,9 +204,11 @@ class DirectionSector(Tagged):
 
         point: np.ndarray = (self.point.astype(int)).astype(float)
 
-        paths: Iterator[PathCommands]
+        paths: Iterable[PathCommands]
         if angle is not None:
-            paths = [Sector(direction, angle).draw(point, direction_radius)]
+            drawn_sector = Sector(direction, angle).draw(point, direction_radius)
+            assert drawn_sector is not None
+            paths = [drawn_sector]
         else:
             paths = DirectionSet(direction).draw(point, direction_radius)
 

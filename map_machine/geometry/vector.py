@@ -6,7 +6,7 @@ import numpy as np
 __author__ = "Sergey Vartanov"
 __email__ = "me@enzet.ru"
 
-from shapely.geometry import LineString
+from shapely.geometry import LineString  # type: ignore[import-untyped]
 
 
 def compute_angle(vector: np.ndarray) -> float:

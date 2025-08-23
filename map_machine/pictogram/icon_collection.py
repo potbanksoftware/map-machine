@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Optional
 
 import numpy as np
-from colour import Color
-from svgwrite import Drawing
+from colour import Color  # type: ignore[import-untyped]
+from svgwrite import Drawing  # type: ignore[import-untyped]
 
 from map_machine.pictogram.icon import (
     Icon,
@@ -71,7 +71,6 @@ class IconCollection:
                 icons.append(constructed_icon)
 
         for matcher in scheme.node_matchers:
-            matcher: NodeMatcher
             if matcher.shapes:
                 add(matcher.shapes)
             if matcher.add_shapes:
@@ -107,17 +106,17 @@ class IconCollection:
 
         if add_unused:
             for shape_id in extractor.shapes.keys() - specified_ids:
-                shape: Shape = extractor.get_shape(shape_id)
+                shape = extractor.get_shape(shape_id)
                 if shape.is_part:
                     continue
-                icon: Icon = Icon([ShapeSpecification(shape, color)])
+                icon = Icon([ShapeSpecification(shape, color)])
                 icon.recolor(color, white=background_color)
                 icons.append(icon)
 
         if add_all:
             for shape_id in extractor.shapes.keys():
-                shape: Shape = extractor.get_shape(shape_id)
-                icon: Icon = Icon([ShapeSpecification(shape, color)])
+                shape = extractor.get_shape(shape_id)
+                icon = Icon([ShapeSpecification(shape, color)])
                 icon.recolor(color, white=background_color)
                 icons.append(icon)
 
@@ -196,7 +195,7 @@ class IconCollection:
             if point[0] > width - 8.0:
                 point[0] = step / 2.0 * scale
                 point += np.array((0.0, step * scale))
-                height += step * scale
+                height += int(step * scale)
 
         with file_name.open("w", encoding="utf-8") as output_file:
             svg.write(output_file)

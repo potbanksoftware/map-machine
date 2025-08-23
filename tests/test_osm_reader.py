@@ -99,6 +99,7 @@ def test_relation() -> None:
     relation: OSMRelation = osm_data.relations[3]
     assert relation.id_ == 3
     assert relation.tags["key"] == "value"
+    assert relation.members is not None
     assert len(relation.members) == 1
     assert relation.members[0].type_ == "way"
     assert relation.members[0].ref == 2

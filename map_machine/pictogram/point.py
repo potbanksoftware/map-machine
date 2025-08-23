@@ -3,8 +3,8 @@ import logging
 from typing import Optional
 
 import numpy as np
-import svgwrite
-from colour import Color
+import svgwrite   # type: ignore[import-untyped]
+from colour import Color  # type: ignore[import-untyped]
 
 from map_machine.drawing import draw_text
 from map_machine.map_configuration import LabelMode
@@ -27,11 +27,10 @@ class Occupied:
         try:
             self.matrix = np.full((int(width), int(height)), False, dtype=bool)
         except Exception:
-            logging.fatal(
+            raise ValueError(
                 "Failed to allocate a matrix required by overlap algorithm. "
                 "Try to use smallest area or try --overlap=0 options."
             )
-            exit(1)
 
         self.width: float = width
         self.height: float = height
@@ -102,7 +101,7 @@ class Point(Tagged):
         tags: Optional[dict[str, str]] = (
             self.tags if self.add_tooltips else None
         )
-        self.main_icon_painted: bool = self.draw_point_shape(
+        self.main_icon_painted = self.draw_point_shape(
             svg,
             self.icon_set.main_icon,
             self.icon_set.default_icon,
@@ -133,9 +132,9 @@ class Point(Tagged):
                 left += 16.0
 
         if is_place_for_extra:
-            left: float = -(len(self.icon_set.extra_icons) - 1.0) * 8.0
+            left = -(len(self.icon_set.extra_icons) - 1.0) * 8.0
             for icon in self.icon_set.extra_icons:
-                point: np.ndarray = self.point + np.array((left, self.y))
+                point = self.point + np.array((left, self.y))
                 self.draw_point_shape(svg, icon, None, point, occupied=occupied)
                 left += 16.0
             if self.icon_set.extra_icons:
@@ -152,7 +151,7 @@ class Point(Tagged):
     ) -> bool:
         """Draw one combined icon and its outline."""
         # Down-cast floats to integers to make icons pixel-perfect.
-        position: np.ndarray = np.array((int(position[0]), int(position[1])))
+        position = np.array((int(position[0]), int(position[1])))
 
         icon_to_draw: Icon = icon
         is_painted: bool = True
@@ -167,7 +166,7 @@ class Point(Tagged):
         if self.draw_outline:
             icon_to_draw.draw(svg, position, outline=True)
 
-        icon_to_draw.draw(svg, position, tags=tags)
+        icon_to_draw.draw(svg, position, tags=tags or {})
 
         if occupied and is_painted:
             overlap: int = occupied.overlap

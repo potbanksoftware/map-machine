@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, Any
 
-from colour import Color
+from colour import Color  # type: ignore[import-untyped]
 
 from map_machine.pictogram.icon import ShapeExtractor, IconSet
 from map_machine.scheme import Scheme
@@ -102,7 +102,7 @@ class MapConfiguration:
         extractor: ShapeExtractor,
         tags: dict[str, Any],
         processed: set[str],
-    ) -> tuple[Optional[IconSet], int]:
+    ) -> tuple[IconSet, int]:
         return self.scheme.get_icon(
             extractor,
             tags,
