@@ -330,6 +330,10 @@ class Scheme:
 	Specifies map colors and rules to draw icons for OpenStreetMap tags.
 	"""
 
+	way_matchers: list[WayMatcher]
+	road_matchers: list[RoadMatcher]
+	area_matchers: list[Matcher]
+
 	def __init__(self, content: dict[str, Any]) -> None:
 		self.node_matchers: list[NodeMatcher] = []
 		if "node_icons" in content:
@@ -350,9 +354,9 @@ class Scheme:
 		self.colors: dict[str, str] = content.get("colors", {})
 		self.material_colors: dict[str, str] = content.get("material_colors", {})
 
-		self.way_matchers: list[WayMatcher] = ([WayMatcher(x, self) for x in content["ways"]] if "ways" in content else [])
-		self.road_matchers: list[RoadMatcher] = ([RoadMatcher(x, self) for x in content["roads"]] if "roads" in content else [])
-		self.area_matchers: list[Matcher] = ([Matcher(x) for x in content["area_tags"]] if "area_tags" in content else [])
+		self.way_matchers = ([WayMatcher(x, self) for x in content["ways"]] if "ways" in content else [])
+		self.road_matchers = ([RoadMatcher(x, self) for x in content["roads"]] if "roads" in content else [])
+		self.area_matchers = ([Matcher(x) for x in content["area_tags"]] if "area_tags" in content else [])
 		self.keys_to_write: list[str] = content.get("keys_to_write", [])
 		self.prefix_to_write: list[str] = content.get("prefix_to_write", [])
 		self.keys_to_skip: list[str] = content.get("keys_to_skip", [])

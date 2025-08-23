@@ -72,7 +72,7 @@ class TaginfoProjectFile:
 					):
 				key: str = list(matcher.tags.keys())[0]
 				value: str = matcher.tags[key]
-				ids: list[str] = [(shape if isinstance(shape, str) else shape["shape"]) for shape in matcher.shapes]
+				ids: list[str] = [(shp if isinstance(shp, str) else shp["shape"]) for shp in matcher.shapes]
 				icon_id: str = "___".join(ids)
 				if value == '*':
 					continue

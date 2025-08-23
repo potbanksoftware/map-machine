@@ -247,7 +247,8 @@ class Map:
 		text_color: Color = Color("#888888")
 		outline_color: Color = Color("#FFFFFF")
 
-		credit_list: list[tuple[str, tuple[float, float]]] = [(f"Rendering: Map Machine", (right_margin, bottom_margin))]
+		credit_list: list[tuple[str, tuple[float, float]]]
+		credit_list = [(f"Rendering: Map Machine", (right_margin, bottom_margin))]
 		if self.configuration.credit:
 			data_credit: tuple[str, tuple[float, float]] = (
 					f"Data: {self.configuration.credit}",
