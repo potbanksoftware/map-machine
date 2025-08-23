@@ -392,4 +392,3 @@ Example of using Röntgen icons on top of the Mapnik style in JOSM. Map Paint St
 
   * ✓ Mapnik (true)
   * ✓ Map Machine
-

@@ -1,69 +1,73 @@
-<!--
-    This is generated file.
-    Do not edit it manually, edit the Moire source file instead.
--->
-
+==============
 Contributing
-============
+==============
 
-Thank you for your interest in the Map Machine project. Since the primary goal of the project is to cover as many tags as possible, the project is crucially depend on contributions as OpenStreetMap itself.
+.. This file based on https://github.com/PyGithub/PyGithub/blob/master/CONTRIBUTING.md
 
-Modify the code
----------------
+``map-machine`` uses `tox <https://tox.readthedocs.io>`_ to automate testing and packaging,
+and `pre-commit <https://pre-commit.com>`_ to maintain code quality.
 
-❗ **IMPORTANT** ❗ Before committing please enable Git hooks:
+Install ``pre-commit`` with ``pip`` and install the git hook:
 
-```shell
-git config --local core.hooksPath data/githooks
-```
+.. code-block:: bash
 
-This will allow you to automatically check your commit message and code before committing and pushing changes. This will crucially speed up pull request merging and make Git history neat and uniform.
-
-### First configure your workspace ###
-
-Make sure you have Python 3.9 development tools. E.g., for Ubuntu, run `apt install python3.9-dev python3.9-venv`.
-
-Activate virtual environment. E.g. for fish shell, run `source venv/bin/activate.fish`.
-
-Install the project in editable mode:
-
-```shell
-pip install -e .
-```
-
-Install formatter, linter and test system: `pip install black flake8 mypy pytest pytest-cov`.
-
-If you are using PyCharm, you may want to set up user dictionary as well:
+	$ python -m pip install pre-commit
+	$ pre-commit install
 
 
-  * `cp data/dictionary.xml .idea/dictionaries/<user name>.xml`
-  * in `.idea/dictionaries/<user name>.xml` change `%USERNAME%` to your username,
-  * restart PyCharm if it is launched.
+Coding style
+--------------
 
-### Code style ###
+`formate <https://formate.readthedocs.io>`_ is used for code formatting.
 
-We use [Black](http://github.com/psf/black) code formatter with maximum 80 characters line length for all Python files within the project. Reformat a file is as simple as `black -l 80 <file name>`. Reformat everything with `black -l 80 map_machine tests`.
+It can be run manually via ``pre-commit``:
 
-If you create new Python file, make sure you add `__author__ = "<first name> <second name>"` and `__email__ = "<author e-mail>"` string variables.
+.. code-block:: bash
 
-### Commit message format ###
+	$ pre-commit run formate -a
 
-The project uses commit messages that starts with a verb in infinitive form with first letter in uppercase, ends with a dot, and is not longer than 50 characters. E.g. `Add new icon.` or `Fix labels.`
 
-If some issues or pull requests are referenced, commit message should starts with prefix such as `PR #123: `, `Issue #42: `, or `Fix #13: ` with the next letter in lowercase. E.g. `PR #123: refactor elements.` or `Issue #42: add icon for natural=tree.`
+Or, to run the complete autoformatting suite:
 
-Suggest a tag to support
-------------------------
+.. code-block:: bash
 
-Please, create an issue describing how you would like the feature to be visualized.
+	$ pre-commit run -a
 
-Report a bug
-------------
 
-Please, create an issue describing the current behavior, expected behavior, and environment (most importantly, the OS version and Python version if it was not the recommended one).
+Automated tests
+-------------------
 
-Fix a typo in documentation
----------------------------
+Tests are run with ``tox`` and ``pytest``.
+To run tests for a specific Python version, such as Python 3.10:
 
-This action is not that easy as it supposed to be. We use [Moire](http://github.com/enzet/Moire) markup and converter to automatically generate documentation for GitHub, website, and [OpenStreetMap wiki](http://wiki.openstreetmap.org/). That's why editing Markdown files is not allowed. To fix a typo, open corresponding Moire file in `doc` directory (e.g. `doc/readme.moi` for `README.md`), modify it, and run `python map_machine/moire_manager.py`.
+.. code-block:: bash
 
+	$ tox -e py310
+
+
+To run tests for all Python versions, simply run:
+
+.. code-block:: bash
+
+	$ tox
+
+
+Type Annotations
+-------------------
+
+Type annotations are checked using ``mypy``. Run ``mypy`` using ``tox``:
+
+.. code-block:: bash
+
+	$ tox -e mypy
+
+
+
+Build documentation locally
+------------------------------
+
+The documentation is powered by Sphinx. A local copy of the documentation can be built with ``tox``:
+
+.. code-block:: bash
+
+	$ tox -e docs
