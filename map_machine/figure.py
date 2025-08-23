@@ -1,19 +1,39 @@
-"Figures displayed on the map."
+#!/usr/bin/env python3
+#
+#  figure.py
+"""
+Figures displayed on the map.
+"""
+#
+#  Copyright © 2021 Sergey Vartanov <me@enzet.ru>
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in all
+#  copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+#  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+#  DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+#  OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+#  OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
 # 3rd party
 import numpy as np
 
 # this package
 from map_machine.geometry.flinger import Flinger
+from map_machine.geometry.vector import Polyline
 from map_machine.osm.osm_reader import OSMNode, Tagged
 from map_machine.scheme import LineStyle
-
-# this package
-from map_machine.geometry.vector import Polyline
-
-__author__ = "Sergey Vartanov"
-__email__ = "me@enzet.ru"
-
-
 
 __all__ = ["Figure", "StyledFigure", "get_path", "is_clockwise", "make_clockwise", "make_counter_clockwise"]
 
