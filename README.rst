@@ -316,7 +316,7 @@ distinguish types (communication, lighting, monitoring, and siren) and construct
 
 
 Volcanoes
-^^^^^^^^
+^^^^^^^^^^
 
 For `natural <https://wiki.openstreetmap.org/wiki/Key:natural>`_ = `volcano <https://wiki.openstreetmap.org/wiki/Tag:natural=volcano>`_
 status (active, dormant, extinct, or unspecified) and type (stratovolcano, shield, or scoria) are rendered by combining 7 unique icon shapes.

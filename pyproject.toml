@@ -27,7 +27,7 @@ map-machine = "map_machine.main:main"
 
 [tool.whey]
 base-classifiers = []
-python-versions = [ "3.1", "3.9", "3.11", "3.12", "3.13",]
+python-versions = [ "3.9", "3.10", "3.11", "3.12", "3.13",]
 python-implementations = [ "CPython",]
 platforms = [ "Windows", "macOS", "Linux",]
 license-key = "MIT"
