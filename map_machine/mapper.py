@@ -27,7 +27,6 @@ Simple OpenStreetMap renderer.
 #
 
 # stdlib
-import argparse
 import logging
 import sys
 from pathlib import Path
@@ -50,13 +49,12 @@ from map_machine.figure import StyledFigure
 from map_machine.geometry.boundary_box import BoundaryBox
 from map_machine.geometry.flinger import Flinger, MercatorFlinger
 from map_machine.geometry.vector import Segment
-from map_machine.map_configuration import LabelMode, MapConfiguration
+from map_machine.map_configuration import BuildingMode, DrawingMode, LabelMode, MapConfiguration
 from map_machine.osm.osm_getter import get_osm
 from map_machine.osm.osm_reader import OSMData, OSMNode
 from map_machine.pictogram.icon import ShapeExtractor
 from map_machine.pictogram.point import Occupied, Point
 from map_machine.scheme import Scheme
-from map_machine.ui.cli import BuildingMode
 from map_machine.workspace import workspace
 
 __all__ = ["Map", "render_map"]
@@ -275,63 +273,83 @@ class Map:
 						)
 
 
-def render_map(arguments: argparse.Namespace) -> None:
+def render_map(
+		input_file_names: list[Path],
+		output_file_name: str,
+		boundary_box: tuple[float, float, float, float],
+		zoom: float,
+		coordinates: tuple[float, float],
+		size: tuple[float, float],
+		scheme: str,
+		cache: str,
+		building_mode: BuildingMode,
+		drawing_mode: DrawingMode,
+		overlap: int,
+		label_mode: LabelMode,
+		level: str,
+		seed: str,
+		country: str,
+		show_tooltips: bool,
+		ignore_level_matching: bool,
+		draw_roofs: bool,
+		use_building_colors: bool,
+		show_overlapped: bool,
+		hide_credit: bool,
+		) -> None:
 	"""
 	Map rendering entry point.
 
 	:param arguments: command-line arguments
 	"""
-	scheme_path: Optional[Path] = workspace.find_scheme_path(arguments.scheme)
+	scheme_path: Optional[Path] = workspace.find_scheme_path(scheme)
 	if scheme_path is None:
-		raise ValueError(f"Scheme `{arguments.scheme}` not found.")
+		raise ValueError(f"Scheme `{scheme}` not found.")
 
-	scheme: Optional[Scheme] = Scheme.from_file(scheme_path)
-	if scheme is None:
-		raise ValueError(f"Failed to load scheme from `{arguments.scheme}`.")
-
-	configuration: MapConfiguration = MapConfiguration.from_options(scheme, arguments, float(arguments.zoom))
-	cache_path: Path = Path(arguments.cache)
+	configuration: MapConfiguration = MapConfiguration(
+			Scheme.from_file(scheme_path),
+			drawing_mode=drawing_mode,
+			building_mode=building_mode,
+			label_mode=label_mode,
+			zoom_level=zoom,
+			overlap=overlap,
+			level=level,
+			seed=seed,
+			show_tooltips=show_tooltips,
+			country=country,
+			ignore_level_matching=ignore_level_matching,
+			draw_roofs=draw_roofs,
+			use_building_colors=use_building_colors,
+			show_overlapped=show_overlapped,
+			show_credit=not hide_credit,
+			)
+	cache_path: Path = Path(cache)
 	cache_path.mkdir(parents=True, exist_ok=True)
 
 	# Compute boundary box.
 
-	boundary_box: Optional[BoundaryBox] = None
+	boundary_box_obj: Optional[BoundaryBox] = None
 
 	# If boundary box is specified explicitly, use it or stop the rendering
 	# process if the box is invalid.
-	if arguments.boundary_box:
-		boundary_box = BoundaryBox.from_text(arguments.boundary_box)
-		if not boundary_box:
+	if boundary_box:
+		boundary_box_obj = BoundaryBox(*boundary_box)
+		if not boundary_box_obj:
 			raise ValueError("Invalid boundary box.")
-		if arguments.coordinates:
+		if coordinates:
 			logging.warning("Boundary box is explicitly specified. Coordinates are ignored.")
 
-	elif arguments.coordinates:
-		coordinates: Optional[np.ndarray] = None
+	elif coordinates:
 
-		for delimiter in ',', '/':
-			if delimiter in arguments.coordinates:
-				coordinates = np.array(list(map(float, arguments.coordinates.split(delimiter))))
-
-		if coordinates is None or len(coordinates) != 2:
+		if len(coordinates) != 2:
 			raise ValueError("Wrong coordinates format.")
 
-		if arguments.size:
-			width, height = np.array(list(map(float, arguments.size.split(','))))
-		else:
-			width, height = DEFAULT_SIZE
-
-		boundary_box = BoundaryBox.from_coordinates(coordinates, configuration.zoom_level, width, height)
+		boundary_box_obj = BoundaryBox.from_coordinates(coordinates, configuration.zoom_level, *size)
 
 	# Determine files.
 
-	input_file_names: Optional[list[Path]] = None
-	if arguments.input_file_names:
-		input_file_names = list(map(Path, arguments.input_file_names))
-	elif boundary_box:
-
-		cache_file_path: Path = (cache_path / f"{boundary_box.get_format()}.osm")
-		get_osm(boundary_box, cache_file_path)
+	if not input_file_names and boundary_box_obj:
+		cache_file_path: Path = (cache_path / f"{boundary_box_obj.get_format()}.osm")
+		get_osm(boundary_box_obj, cache_file_path)
 		input_file_names = [cache_file_path]
 	else:
 		logging.critical("Specify either --input, or --boundary-box, or --coordinates.")
@@ -351,19 +369,17 @@ def render_map(arguments: argparse.Namespace) -> None:
 		else:
 			osm_data.parse_osm_file(input_file_name)
 
-	if not boundary_box:
-		boundary_box = osm_data.view_box
-	if not boundary_box:
-		boundary_box = osm_data.boundary_box
+	if not boundary_box_obj:
+		boundary_box_obj = osm_data.view_box
+	if not boundary_box_obj:
+		boundary_box_obj = osm_data.boundary_box
 
-	assert boundary_box is not None
+	assert boundary_box_obj is not None
 
 	# Render the map.
 
-	flinger: MercatorFlinger = MercatorFlinger(boundary_box, arguments.zoom, osm_data.equator_length)
-	size: np.ndarray = flinger.size
-
-	svg: svgwrite.Drawing = svgwrite.Drawing(arguments.output_file_name, size)
+	flinger: MercatorFlinger = MercatorFlinger(boundary_box_obj, zoom, osm_data.equator_length)
+	svg: svgwrite.Drawing = svgwrite.Drawing(output_file_name, flinger.size)
 	icon_extractor: ShapeExtractor = ShapeExtractor(workspace.ICONS_PATH, workspace.ICONS_CONFIG_PATH)
 
 	constructor: Constructor = Constructor(
@@ -377,6 +393,6 @@ def render_map(arguments: argparse.Namespace) -> None:
 	map_: Map = Map(flinger=flinger, svg=svg, configuration=configuration)
 	map_.draw(constructor)
 
-	logging.info(f"Writing output SVG to {arguments.output_file_name}...")
-	with open(arguments.output_file_name, 'w', encoding="utf-8") as output_file:
+	logging.info(f"Writing output SVG to {output_file_name}...")
+	with open(output_file_name, 'w', encoding="utf-8") as output_file:
 		svg.write(output_file)

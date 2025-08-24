@@ -27,7 +27,6 @@ Entry point for element drawing: nodes, ways, and relations.
 #
 
 # stdlib
-import argparse
 from pathlib import Path
 
 # this package
@@ -68,14 +67,14 @@ def draw_area(tags: Tags, path: Path) -> None:
 	grid.draw(path)
 
 
-def draw_element(options: argparse.Namespace) -> None:
+def draw_element(draw_type: str, tags: str, output_file: Path) -> None:
 	"""Entry point for element drawing."""
-	tags_description: Tags = {x.split('=')[0]: x.split('=')[1] for x in options.tags.split(',')}
-	if options.type == "node":
-		draw_node(tags_description, Path(options.output_file))
-	elif options.type == "way":
-		draw_way(tags_description, Path(options.output_file))
-	elif options.type == "area":
-		draw_area(tags_description, Path(options.output_file))
+	tags_description: Tags = {x.split('=')[0]: x.split('=')[1] for x in tags.split(',')}
+	if draw_type == "node":
+		draw_node(tags_description, Path(output_file))
+	elif draw_type == "way":
+		draw_way(tags_description, Path(output_file))
+	elif draw_type == "area":
+		draw_area(tags_description, Path(output_file))
 	else:
-		raise ValueError(f"Unknown element type `{options.type}`, please choose from `node`, `way`, and `area`.")
+		raise ValueError(f"Unknown element type `{draw_type}`, please choose from `node`, `way`, and `area`.")

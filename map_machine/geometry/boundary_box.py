@@ -42,7 +42,9 @@ LONGITUDE_MAX_DIFFERENCE: float = 0.5
 
 @dataclass
 class BoundaryBox:
-	"""Rectangle that limit space on the map."""
+	"""
+	Rectangle that limit space on the map.
+	"""
 
 	left: float  # Minimum longitude.
 	bottom: float  # Minimum latitude.

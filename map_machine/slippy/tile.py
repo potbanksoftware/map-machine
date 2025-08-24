@@ -29,11 +29,11 @@ See https://wiki.openstreetmap.org/wiki/Tiles
 #
 
 # stdlib
-import argparse
 import logging
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 
 # 3rd party
 import cairosvg  # type: ignore[import-untyped]
@@ -45,7 +45,7 @@ from PIL import Image
 from map_machine.constructor import Constructor
 from map_machine.geometry.boundary_box import BoundaryBox
 from map_machine.geometry.flinger import MercatorFlinger
-from map_machine.map_configuration import MapConfiguration
+from map_machine.map_configuration import BuildingMode, DrawingMode, LabelMode, MapConfiguration
 from map_machine.mapper import Map
 from map_machine.osm.osm_getter import NetworkError, get_osm
 from map_machine.osm.osm_reader import OSMData
@@ -431,57 +431,124 @@ def parse_zoom_level(zoom_level_specification: str) -> list[int]:
 	return result
 
 
-def generate_tiles(options: argparse.Namespace) -> None:
-	"""Simple user interface for tile generation."""
+def generate_tiles(
+		input_file_name: Optional[Path],
+		boundary_box: tuple[float, float, float, float],
+		zoom: str,
+		coordinates: tuple[float, float],
+		tile: tuple[int, float, float],
+		cache: str,
+		scheme: str,
+		building_mode: BuildingMode,
+		drawing_mode: DrawingMode,
+		overlap: int,
+		label_mode: LabelMode,
+		level: str,
+		seed: str,
+		country: str,
+		show_tooltips: bool,
+		ignore_level_matching: bool,
+		draw_roofs: bool,
+		use_building_colors: bool,
+		show_overlapped: bool,
+		hide_credit: bool,
+		) -> None:
+	"""
+	Simple user interface for tile generation.
+	"""
+
 	directory: Path = workspace.get_tile_path()
 
-	zoom_levels: list[int] = parse_zoom_level(options.zoom)
+	zoom_levels: list[int] = parse_zoom_level(zoom)
 	min_zoom_level: int = min(zoom_levels)
 
-	scheme: Scheme = Scheme.from_file(workspace.find_scheme_path(options.scheme))
-
-	if options.input_file_name:
+	if input_file_name:
 		osm_data: OSMData = OSMData()
-		osm_data.parse_osm_file(Path(options.input_file_name))
+		osm_data.parse_osm_file(input_file_name)
 
 		if osm_data.view_box is None:
-			raise ValueError(f"Failed to parse boundary box input file {options.input_file_name}.")
-
-		boundary_box: BoundaryBox = osm_data.view_box
+			raise ValueError(f"Failed to parse boundary box input file {input_file_name.as_posix()}.")
 
 		for zoom_level in zoom_levels:
-			configuration: MapConfiguration = MapConfiguration.from_options(scheme, options, zoom_level)
-			tiles: Tiles = Tiles.from_boundary_box(boundary_box, zoom_level)
-			tiles.draw(directory, Path(options.cache), configuration, osm_data)
+			configuration: MapConfiguration = MapConfiguration(
+					Scheme.from_file(workspace.find_scheme_path(scheme)),
+					drawing_mode=drawing_mode,
+					building_mode=building_mode,
+					label_mode=label_mode,
+					zoom_level=zoom_level,
+					overlap=overlap,
+					level=level,
+					seed=seed,
+					show_tooltips=show_tooltips,
+					country=country,
+					ignore_level_matching=ignore_level_matching,
+					draw_roofs=draw_roofs,
+					use_building_colors=use_building_colors,
+					show_overlapped=show_overlapped,
+					show_credit=not hide_credit,
+					)
+			tiles: Tiles = Tiles.from_boundary_box(osm_data.view_box, zoom_level)
+			tiles.draw(directory, Path(cache), configuration, osm_data)
 
-	elif options.coordinates:
-		coordinates: list[float] = list(map(float, options.coordinates.strip().split(',')))
+	elif coordinates:
 		min_tile: Tile = Tile.from_coordinates(np.array(coordinates), min_zoom_level)
 		try:
-			osm_data = min_tile.load_osm_data(Path(options.cache))
+			osm_data = min_tile.load_osm_data(Path(cache))
 		except NetworkError as error:
 			raise NetworkError(f"Map is not loaded. {error.message}")
 
 		for zoom_level in zoom_levels:
-			tile: Tile = Tile.from_coordinates(np.array(coordinates), zoom_level)
+			map_tile: Tile = Tile.from_coordinates(np.array(coordinates), zoom_level)
 
-			configuration = MapConfiguration.from_options(scheme, options, zoom_level)
-			tile.draw_with_osm_data(osm_data, directory, configuration)
+			configuration = MapConfiguration(
+					Scheme.from_file(workspace.find_scheme_path(scheme)),
+					drawing_mode=drawing_mode,
+					building_mode=building_mode,
+					label_mode=label_mode,
+					zoom_level=zoom_level,
+					overlap=overlap,
+					level=level,
+					seed=seed,
+					show_tooltips=show_tooltips,
+					country=country,
+					ignore_level_matching=ignore_level_matching,
+					draw_roofs=draw_roofs,
+					use_building_colors=use_building_colors,
+					show_overlapped=show_overlapped,
+					show_credit=not hide_credit,
+					)
+			map_tile.draw_with_osm_data(osm_data, directory, configuration)
 
-	elif options.tile:
-		zoom_level, x, y = map(int, options.tile.split('/'))
-		tile = Tile(x, y, zoom_level)
-		configuration = MapConfiguration.from_options(scheme, options, zoom_level)
-		tile.draw(directory, Path(options.cache), configuration)
+	elif tile:
+		zoom_level, x, y = map(int, tile.split('/'))
+		map_tile = Tile(x, y, zoom_level)
+		configuration = MapConfiguration(
+				Scheme.from_file(workspace.find_scheme_path(scheme)),
+				drawing_mode=drawing_mode,
+				building_mode=building_mode,
+				label_mode=label_mode,
+				zoom_level=zoom_level,
+				overlap=overlap,
+				level=level,
+				seed=seed,
+				show_tooltips=show_tooltips,
+				country=country,
+				ignore_level_matching=ignore_level_matching,
+				draw_roofs=draw_roofs,
+				use_building_colors=use_building_colors,
+				show_overlapped=show_overlapped,
+				show_credit=not hide_credit,
+				)
+		map_tile.draw(directory, Path(cache), configuration)
 
-	elif options.boundary_box:
-		boundary_box = BoundaryBox.from_text(options.boundary_box)
+	elif boundary_box:
+		boundary_box = BoundaryBox(*boundary_box)
 		if boundary_box is None:
 			raise ValueError("Failed to parse boundary box.")
 
 		min_tiles: Tiles = Tiles.from_boundary_box(boundary_box, min_zoom_level)
 		try:
-			osm_data = min_tiles.load_osm_data(Path(options.cache))
+			osm_data = min_tiles.load_osm_data(Path(cache))
 		except NetworkError as error:
 			raise NetworkError(f"Map is not loaded. {error.message}")
 
@@ -490,8 +557,24 @@ def generate_tiles(options: argparse.Namespace) -> None:
 				tiles = min_tiles.subdivide(zoom_level)
 			else:
 				tiles = Tiles.from_boundary_box(boundary_box, zoom_level)
-			configuration = MapConfiguration.from_options(scheme, options, zoom_level)
-			tiles.draw(directory, Path(options.cache), configuration, osm_data)
+			configuration = MapConfiguration(
+					Scheme.from_file(workspace.find_scheme_path(scheme)),
+					drawing_mode=drawing_mode,
+					building_mode=building_mode,
+					label_mode=label_mode,
+					zoom_level=zoom_level,
+					overlap=overlap,
+					level=level,
+					seed=seed,
+					show_tooltips=show_tooltips,
+					country=country,
+					ignore_level_matching=ignore_level_matching,
+					draw_roofs=draw_roofs,
+					use_building_colors=use_building_colors,
+					show_overlapped=show_overlapped,
+					show_credit=not hide_credit,
+					)
+			tiles.draw(directory, Path(cache), configuration, osm_data)
 
 	else:
 		logging.critical("Specify either --coordinates, --boundary-box, --tile, or --input.")

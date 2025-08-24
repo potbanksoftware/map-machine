@@ -27,7 +27,6 @@ MapCSS scheme creation.
 #
 
 # stdlib
-import argparse
 import logging
 from pathlib import Path
 from typing import Optional, TextIO
@@ -197,8 +196,11 @@ class MapCSSWriter:
 					output_file.write(self.add_selector(target, matcher, stage_of_decay, opacity))
 
 
-def generate_mapcss(options: argparse.Namespace) -> None:
-	"""Write MapCSS 0.2 scheme."""
+def generate_mapcss(icons: bool, ways: bool, lifecycle: bool) -> None:
+	"""
+	Write MapCSS 0.2 scheme.
+	"""
+
 	directory: Path = workspace.get_mapcss_path()
 	icons_with_outline_path: Path = workspace.get_mapcss_icons_path()
 
@@ -215,9 +217,9 @@ def generate_mapcss(options: argparse.Namespace) -> None:
 	mapcss_writer: MapCSSWriter = MapCSSWriter(
 			scheme,
 			workspace.MAPCSS_ICONS_DIRECTORY_NAME,
-			options.icons,
-			options.ways,
-			options.lifecycle,
+			icons,
+			ways,
+			lifecycle,
 			)
 	with workspace.get_mapcss_file_path().open("w+", encoding="utf-8") as output_file:
 		mapcss_writer.write(output_file)

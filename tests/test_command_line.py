@@ -1,7 +1,10 @@
 # stdlib
-import argparse
 from pathlib import Path
 from subprocess import PIPE, Popen
+
+# 3rd party
+from coincidence.regressions import AdvancedFileRegressionFixture
+from domdf_python_tools.paths import PathPlus
 
 __author__ = "Sergey Vartanov"
 __email__ = "me@enzet.ru"
@@ -10,8 +13,19 @@ __email__ = "me@enzet.ru"
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 
-# this package
-from map_machine.ui.cli import COMMAND_LINES, parse_arguments
+COMMAND_LINES: dict[str, list[str]] = {
+		"render": ["render", "-b", "10.000,20.000,10.001,20.001"],
+		"render_with_tooltips": [
+				"render",
+				"-b",
+				"10.000,20.000,10.001,20.001",
+				"--tooltips",
+				],
+		"icons": ["icons"],
+		"mapcss": ["mapcss"],
+		"draw": ["draw", "node", "amenity=bench,material=wood"],
+		"tile": ["tile", "--coordinates", "50.000,40.000"],
+		}
 
 LOG: bytes = (
 		b"INFO Constructing ways...\n"
@@ -122,13 +136,15 @@ def test_draw() -> None:
 	assert (OUTPUT_PATH / "element.svg").is_file()
 
 
-def test_unwrapped_draw() -> None:
+def test_unwrapped_draw(tmp_pathplus: PathPlus, advanced_file_regression: AdvancedFileRegressionFixture) -> None:
 	"""Test `element` command from inside the project."""
-	arguments: argparse.Namespace = parse_arguments(["map_machine"] + COMMAND_LINES["draw"])
+
 	# this package
 	from map_machine.element.element import draw_element
 
-	draw_element(arguments)
+	draw_element("node", "amenity=bench,material=wood", tmp_pathplus / "node.svg")
+
+	advanced_file_regression.check_file(tmp_pathplus / "node.svg")
 
 
 def test_tile() -> None:

@@ -1,5 +1,7 @@
 cairosvg>=2.5.0
+click>=8.0.0
 colour>=0.1.5
+consolekit>=1.9.0
 numpy>=1.18.1
 pillow>=8.2.0
 portolan>=1.0.1

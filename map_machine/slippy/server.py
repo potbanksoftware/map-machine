@@ -27,7 +27,6 @@ Map Machine tile server for slippy maps.
 #
 
 # stdlib
-import argparse
 import logging
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
@@ -49,7 +48,6 @@ class TileServerHandler(SimpleHTTPRequestHandler):
 
 	cache: Path = Path("cache")
 	update_cache: bool = False
-	options: Optional[argparse.Namespace] = None
 
 	def do_GET(self) -> None:
 		"""Serve a GET request."""
@@ -86,15 +84,14 @@ class TileServerHandler(SimpleHTTPRequestHandler):
 				return
 
 
-def run_server(options: argparse.Namespace) -> None:
+def run_server(port: int, cache: str) -> None:
 	"""Command-line interface for tile server."""
 	server: Optional[HTTPServer] = None
 	try:
 		handler = TileServerHandler
-		handler.cache = Path(options.cache)
-		handler.options = options
-		server = HTTPServer(('', options.port), handler)
-		logging.info(f"Server started on port {options.port}.")
+		handler.cache = Path(cache)
+		server = HTTPServer(('', port), handler)
+		logging.info(f"Server started on port {port}.")
 		server.serve_forever()
 	finally:
 		if server:

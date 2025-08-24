@@ -27,7 +27,6 @@ Map drawing configuration.
 #
 
 # stdlib
-import argparse
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Optional
@@ -92,27 +91,6 @@ class MapConfiguration:
 	show_overlapped: bool = False
 	credit: Optional[str] = "© OpenStreetMap contributors"
 	show_credit: bool = True
-
-	@classmethod
-	def from_options(cls, scheme: Scheme, options: argparse.Namespace, zoom_level: float) -> "MapConfiguration":
-		"""Initialize from command-line options."""
-		return cls(
-				scheme,
-				DrawingMode(options.mode),
-				BuildingMode(options.buildings),
-				LabelMode(options.label_mode),
-				zoom_level,
-				options.overlap,
-				options.level,
-				options.seed,
-				options.tooltips,
-				options.country,
-				options.ignore_level_matching,
-				options.roofs,
-				options.building_colors,
-				options.show_overlapped,
-				show_credit=not options.hide_credit,
-				)
 
 	def is_wireframe(self) -> bool:
 		"""Whether drawing mode is special."""

@@ -45,7 +45,7 @@ from map_machine.feature.road import Road, Roads
 from map_machine.feature.tree import Tree
 from map_machine.figure import StyledFigure
 from map_machine.geometry.flinger import Flinger
-from map_machine.map_configuration import DrawingMode, MapConfiguration
+from map_machine.map_configuration import BuildingMode, DrawingMode, MapConfiguration
 from map_machine.osm.osm_reader import OSMData, OSMNode, OSMRelation, OSMWay, Tags, parse_levels
 from map_machine.pictogram.icon import (
 		DEFAULT_SMALL_SHAPE_ID,
@@ -58,7 +58,6 @@ from map_machine.pictogram.icon import (
 from map_machine.pictogram.point import Point
 from map_machine.scheme import LineStyle, RoadMatcher, Scheme
 from map_machine.text import Label, TextConstructor
-from map_machine.ui.cli import BuildingMode
 from map_machine.util import MinMax
 
 __all__ = [
